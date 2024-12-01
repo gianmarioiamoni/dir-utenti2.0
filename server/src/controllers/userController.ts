@@ -11,11 +11,17 @@ export const getUsers = async (
   res: Response,
   next: NextFunction
 ) => {
-  const {
-    page = 1,
-    limit = 10,
-    fields = "nome cognome email"
-  } = req.query;
+  const { page = 1, limit = 10, fields = "nome cognome email" } = req.query;
+
+  // Validazione esplicita dei parametri non validi
+  if (
+    !Number.isInteger(Number(page)) ||
+    Number(page) <= 0 ||
+    !Number.isInteger(Number(limit)) ||
+    Number(limit) <= 0
+  ) {
+    return next(new Error("Invalid pagination parameters"));
+  }
 
   try {
     const users = await User.find({}, fields.toString().split(",").join(" "))
@@ -24,7 +30,7 @@ export const getUsers = async (
 
     const total = await User.countDocuments();
 
-    res.json({users, total});
+    res.json({ users, total });
     return;
   } catch (err) {
     next(err);

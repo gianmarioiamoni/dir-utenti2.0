@@ -80,4 +80,42 @@ describe("getUsers controller with jest-mock-extended", () => {
 
     jest.restoreAllMocks();
   });
+    
+  it("should handle invalid query parameters gracefully", async () => {
+    const req = {
+      query: { page: "invalid", limit: "-5" }, // Parametri non validi
+    } as unknown as Request;
+
+    const res = {
+      json: jest.fn(),
+    } as unknown as Response;
+
+    const next = jest.fn() as NextFunction;
+
+    // Mock di User.find per evitare errori durante la chiamata
+    jest.spyOn(User, "find").mockImplementation(
+      () =>
+        ({
+          skip: jest.fn().mockReturnThis(),
+          limit: jest.fn().mockResolvedValue([]),
+        } as any)
+    );
+
+    jest.spyOn(User, "countDocuments").mockResolvedValue(0);
+
+    await getUsers(req, res, next);
+
+    // Verifica che il middleware di errore sia stato chiamato
+    expect(next).toHaveBeenCalledWith(
+      new Error("Invalid pagination parameters")
+    );
+
+    // Assicura che la risposta non venga inviata
+    expect(res.json).not.toHaveBeenCalled();
+
+    // Ripristina i mock
+    jest.restoreAllMocks();
+  });
+  
+  // Add more test cases
 });
