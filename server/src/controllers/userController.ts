@@ -65,46 +65,6 @@ export const getUserById = async (
   }
 };
 
-// // Create a new user
-// export const createUser = async (
-//   req: Request,
-//   res: Response,
-//   next: NextFunction
-// ) => {
-//     try {
-//       // Validation
-//       const errors = validationResult(req);
-//       if (!errors.isEmpty()) {
-//         res.status(400).json({ errors: errors.array() });
-//         return;
-//       }
-
-//       const { nome, cognome, email, dataNascita, fotoProfilo } = req.body;
-
-//       // Verifica se l'email esiste già
-//       const existingUser = await User.findOne({ email });
-//       if (existingUser) {
-//         throw new CustomError(
-//           "Email già in uso. Utilizzare un altro indirizzo email.",
-//           409
-//         );
-//       }
-
-//       const newUser = new User({
-//         nome,
-//         cognome,
-//         email,
-//         dataNascita,
-//         fotoProfilo,
-//       });
-
-//       await newUser.save();
-
-//       res.status(201).json(newUser);
-//     } catch (err) {
-//     next(err);
-//   }
-// };
 export const createUser = async (
   req: Request,
   res: Response,
