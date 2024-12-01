@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { validationResult } from "express-validator";
+import { isValidObjectId } from "mongoose";
 
 import { CustomError } from "../utils/CustomError";
 
@@ -44,6 +45,12 @@ export const getUserById = async (
   res: Response,
   next: NextFunction
 ) => {
+  // Verifica se l'ID fornito è valido
+  if (!isValidObjectId(req.params.id)) {
+    res.status(400).json({ message: "Invalid user ID format" });
+    return;
+  }
+  
   try {
     const user = await User.findById(req.params.id);
     if (!user) {

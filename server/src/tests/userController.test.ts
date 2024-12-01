@@ -201,25 +201,32 @@ describe("getUsers controller with jest-mock-extended", () => {
 
 describe("getUserById controller with jest-mock-extended", () => {
   it("should return the user if found", async () => {
-    const req = { params: { id: "validUserId" } } as unknown as Request;
+    // Passiamo un ID valido di 24 caratteri esadecimali
+    const req = {
+      params: { id: "605c72ef1532073e88a4c5b0" },
+    } as unknown as Request;
 
     const res = {
+      status: jest.fn().mockReturnThis(),
       json: jest.fn(),
     } as unknown as Response;
 
     const next = jest.fn() as NextFunction;
 
+    // Mock per il metodo findById
     jest.spyOn(User, "findById").mockResolvedValueOnce({
-      _id: "validUserId",
+      _id: "605c72ef1532073e88a4c5b0",
       firstName: "John",
       lastName: "Doe",
       email: "john.doe@example.com",
     } as any);
 
+    // Eseguiamo il controller
     await getUserById(req, res, next);
 
+    // Verifica che il metodo json sia stato chiamato con l'utente
     expect(res.json).toHaveBeenCalledWith({
-      _id: "validUserId",
+      _id: "605c72ef1532073e88a4c5b0",
       firstName: "John",
       lastName: "Doe",
       email: "john.doe@example.com",
@@ -229,7 +236,9 @@ describe("getUserById controller with jest-mock-extended", () => {
   });
 
   it("should return 404 if user is not found", async () => {
-    const req = { params: { id: "nonExistingUserId" } } as unknown as Request;
+    const req = {
+      params: { id: "605c72ef1532073e88a4c5b0" },
+    } as unknown as Request;
 
     const res = {
       status: jest.fn().mockReturnThis(),
@@ -238,10 +247,12 @@ describe("getUserById controller with jest-mock-extended", () => {
 
     const next = jest.fn() as NextFunction;
 
+    // Simuliamo che l'utente non esista
     jest.spyOn(User, "findById").mockResolvedValueOnce(null);
 
     await getUserById(req, res, next);
 
+    // Verifica che il codice di stato sia 404 e che il messaggio sia quello corretto
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith({ message: "User not found" });
 
@@ -249,7 +260,9 @@ describe("getUserById controller with jest-mock-extended", () => {
   });
 
   it("should call next with an error if the database operation fails", async () => {
-    const req = { params: { id: "validUserId" } } as unknown as Request;
+    const req = {
+      params: { id: "605c72ef1532073e88a4c5b0" },
+    } as unknown as Request;
 
     const res = {} as unknown as Response;
 
@@ -265,6 +278,28 @@ describe("getUserById controller with jest-mock-extended", () => {
 
     jest.restoreAllMocks();
   });
+    
+  it("should return 400 if the provided ID is not valid", async () => {
+    const req = { params: { id: "invalidId" } } as unknown as Request;
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as unknown as Response;
+
+    const next = jest.fn() as NextFunction;
+
+    await getUserById(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Invalid user ID format",
+    });
+
+    jest.restoreAllMocks();
+  });
+
+
 
   // Add more test cases
 });
