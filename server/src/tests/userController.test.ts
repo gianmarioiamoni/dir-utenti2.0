@@ -66,7 +66,7 @@ describe("getUsers controller with jest-mock-extended", () => {
 
     // Mock di req, res e next
     const req = {
-      query: {}, 
+      query: {},
     } as unknown as Request;
     const res = {
       json: jest.fn(),
@@ -80,7 +80,7 @@ describe("getUsers controller with jest-mock-extended", () => {
 
     jest.restoreAllMocks();
   });
-    
+
   it("should handle invalid query parameters gracefully", async () => {
     const req = {
       query: { page: "invalid", limit: "-5" }, // Parametri non validi
@@ -116,6 +116,55 @@ describe("getUsers controller with jest-mock-extended", () => {
     // Ripristina i mock
     jest.restoreAllMocks();
   });
-  
+
+  it("should return the correct users based on pagination parameters", async () => {
+    const req = {
+      query: { page: "2", limit: "1" }, // Pagina 2, limite 1
+    } as unknown as Request;
+
+    const res = {
+      json: jest.fn(),
+    } as unknown as Response;
+
+    const next = jest.fn() as NextFunction;
+
+    // Mock di User.find
+    jest.spyOn(User, "find").mockImplementation(
+      () =>
+        ({
+          skip: jest.fn().mockReturnThis(),
+          limit: jest
+            .fn()
+            .mockResolvedValue([
+              {
+                firstName: "Jane",
+                lastName: "Doe",
+                email: "jane.doe@example.com",
+              },
+            ]),
+        } as any)
+    );
+
+    // Mock di User.countDocuments
+    jest.spyOn(User, "countDocuments").mockResolvedValue(2);
+
+    // Esegui il controller
+    await getUsers(req, res, next);
+
+    // Verifica che res.json sia stato chiamato con il risultato atteso
+    expect(res.json).toHaveBeenCalledWith({
+      users: [
+        { firstName: "Jane", lastName: "Doe", email: "jane.doe@example.com" },
+      ],
+      total: 2,
+    });
+
+    // Assicura che next non sia stato chiamato
+    expect(next).not.toHaveBeenCalled();
+
+    // Ripristina i mock
+    jest.restoreAllMocks();
+  });
+
   // Add more test cases
 });
