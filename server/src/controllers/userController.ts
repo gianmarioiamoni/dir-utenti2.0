@@ -14,7 +14,7 @@ export const getUsers = async (
   const {
     page = 1,
     limit = 10,
-    fields = "firstName lastName email",
+    fields = "nome cognome email"
   } = req.query;
 
   try {
