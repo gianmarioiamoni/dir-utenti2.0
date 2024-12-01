@@ -1,8 +1,15 @@
 import { mock } from "jest-mock-extended";
 import { getUsers, getUserById, createUser } from "../controllers/userController";
 import { Request, Response, NextFunction } from "express";
+import { mockDeep, MockProxy } from "jest-mock-extended";
 import User from "../models/User";
+import { validationResult, Result, ValidationError } from "express-validator";
+import { CustomError } from "../utils/CustomError";
 
+
+//
+// GetUsers()
+// 
 describe("getUsers controller with jest-mock-extended", () => {
   it("should return a paginated list of users", async () => {
     // Crea un mock per il modello User
@@ -199,6 +206,9 @@ describe("getUsers controller with jest-mock-extended", () => {
   // Add more test cases
 });
 
+//
+// GetUserById()
+//
 describe("getUserById controller with jest-mock-extended", () => {
   it("should return the user if found", async () => {
     // Passiamo un ID valido di 24 caratteri esadecimali
@@ -303,50 +313,218 @@ describe("getUserById controller with jest-mock-extended", () => {
 });
 
 
-describe("addUser controller with jest-mock-extended", () => {
-  it("should create a new user and return it with status 201", async () => {
-    const req = {
-      body: {
-        nome: "John",
-        cognome: "Doe",
-        email: "john.doe@example.com",
-        dataNascita: "1990-01-01",
-        fotoProfilo: "url_to_profile_picture",
-      },
-    } as unknown as Request;
+//
+// AddUser()
+//
+// Mock del modello User
 
-    const res = {
+// Mock dell'intero modulo express-validator
+jest.mock("express-validator", () => ({
+  ...jest.requireActual("express-validator"),
+  validationResult: jest.fn(),
+}));
+
+// Helper per mockare validationResult
+export const mockValidationResult = (isValid: boolean, errors: any[] = []) => {
+  (validationResult as unknown as jest.Mock).mockImplementation(() => ({
+    isEmpty: () => isValid,
+    array: () => errors,
+  }));
+};
+
+jest.mock("express-validator", () => ({
+  ...jest.requireActual("express-validator"),
+  validationResult: jest.fn(),
+}));
+
+describe("addUser controller", () => {
+  let req: Partial<Request>;
+  let res: Partial<Response>;
+  let next: NextFunction;
+
+  beforeEach(() => {
+    // Inizializza req, res e next
+    req = {
+      body: {},
+    };
+    res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
-    } as unknown as Response;
+    };
+    next = jest.fn();
+  });
 
-    const next = jest.fn() as NextFunction;
+  it("should handle validation errors", async () => {
+    mockValidationResult(false, [
+      { msg: "Nome è richiesto", param: "nome", location: "body" },
+    ]);
 
-    // Simulazione del salvataggio dell'utente (mock della funzione save)
-    jest.spyOn(User.prototype, "save").mockResolvedValueOnce({
-      nome: "John",
-      cognome: "Doe",
-      email: "john.doe@example.com",
-      dataNascita: "1990-01-01",
-      fotoProfilo: "url_to_profile_picture",
-    });
+    await createUser(req as Request, res as Response, next);
 
-    await createUser(req, res, next);
-
-    // Assicurati che le funzioni siano state chiamate
-    expect(res.status).toHaveBeenCalledWith(201);
+    expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
-      nome: "John",
-      cognome: "Doe",
-      email: "john.doe@example.com",
-      dataNascita: "1990-01-01",
-      fotoProfilo: "url_to_profile_picture",
+      errors: [{ msg: "Nome è richiesto", param: "nome", location: "body" }],
     });
+  });
 
-    // Ripristina i mock
-    jest.restoreAllMocks();
-  }, 10000); // Timeout del test aumentato a 10 secondi
+  it("should add a user and return 201 with the created user", async () => {
+    // Mock input valido
+    req.body = {
+      nome: "Mario",
+      cognome: "Rossi",
+      email: "mario2@example.com",
+      dataNascita: "1990-01-01",
+      fotoProfilo: "https://example.com/mario.jpg",
+    };
 
-  
+    // Mock validazione
+    mockValidationResult(true); // Validazione corretta
+
+    // Mock comportamento del database (simuliamo il salvataggio dell'utente)
+    const mockUser = {
+      _id: "674cb19886d5da3a35255181", // ID fisso per il mock
+      nome: "Mario",
+      cognome: "Rossi",
+      email: "mario2@example.com",
+      dataNascita: new Date("1990-01-01"), // Data come oggetto Date
+      fotoProfilo: "https://example.com/mario.jpg",
+    };
+
+    jest.spyOn(User.prototype, "save").mockResolvedValueOnce(mockUser);
+
+    // Mock della ricerca dell'utente
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(null); // Nessun utente esistente
+
+    // Crea i mock per res
+    const resMock = {
+      status: jest.fn().mockReturnThis(), // Mock del metodo status che ritorna 'this' per il chaining
+      json: jest.fn(), // Mock del metodo json
+    };
+
+    // Esegui il controller
+    await createUser(req as Request, resMock as unknown as Response, next);
+
+    // Verifica che la risposta contenga lo status 201
+    expect(resMock.status).toHaveBeenCalledWith(201);
+
+    // Verifica che la risposta contenga un oggetto con i campi attesi
+    const response = resMock.json.mock.calls[0][0]; // Prendi il primo parametro passato a res.json
+
+    // Verifica che la risposta non sia nulla e contenga i campi principali
+    expect(response).not.toBeNull();
+    expect(response).toHaveProperty("nome", "Mario");
+    expect(response).toHaveProperty("cognome", "Rossi");
+    expect(response).toHaveProperty("email", "mario2@example.com");
+    expect(response).toHaveProperty(
+      "fotoProfilo",
+      "https://example.com/mario.jpg"
+    );
+    // Non verificare l'ID o la data
+  });
+    
+  it("should return 400 if the user data is incomplete or invalid", async () => {
+    // Mock input con dati mancanti
+    req.body = {
+      nome: "Mario",
+      cognome: "", // cognome vuoto
+      email: "mario2@example.com",
+      dataNascita: "1990-01-01",
+      fotoProfilo: "https://example.com/mario.jpg",
+    };
+
+    // Mock validazione
+    mockValidationResult(false); // La validazione fallisce
+
+    // Crea i mock per res
+    const resMock = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    // Esegui il controller
+    await createUser(req as Request, resMock as unknown as Response, next);
+
+    // Verifica che lo status sia 400
+    expect(resMock.status).toHaveBeenCalledWith(400);
+
+    // Verifica che la risposta contenga un array di errori
+    expect(resMock.json).toHaveBeenCalledWith({
+      errors: expect.any(Array),
+    });
+  });
+
+  it("should return 409 if the user already exists", async () => {
+    // Mock input valido
+    req.body = {
+      nome: "Mario",
+      cognome: "Rossi",
+      email: "mario2@example.com", // L'email già esistente
+      dataNascita: "1990-01-01",
+      fotoProfilo: "https://example.com/mario.jpg",
+    };
+
+    // Mock validazione
+    mockValidationResult(true); // Validazione corretta
+
+    // Mock comportamento del database per trovare un utente esistente
+    const existingUser = {
+      _id: "674cb19886d5da3a35255181",
+      nome: "Mario",
+      cognome: "Rossi",
+      email: "mario2@example.com", // L'email già esistente
+      dataNascita: new Date("1990-01-01"),
+      fotoProfilo: "https://example.com/mario.jpg",
+    };
+
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(existingUser); // Restituisce un utente esistente
+
+    // Crea i mock per res e next
+    const resMock = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    const nextMock = jest.fn(); // Mock della funzione next
+
+    // Esegue il controller
+    await createUser(req as Request, resMock as unknown as Response, nextMock);
+
+    // Verifica che la funzione next sia stata chiamata con l'errore personalizzato
+    expect(nextMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: "Email già in uso. Utilizzare un altro indirizzo email.",
+        status: 409,
+      })
+    );
+  });
+
+  it("should return 500 if there is a database error", async () => {
+    // Mock input valido
+    req.body = {
+      nome: "Mario",
+      cognome: "Rossi",
+      email: "mario10@example.com",
+      dataNascita: "1990-01-01",
+      fotoProfilo: "https://example.com/mario.jpg",
+    };
+
+    // Mock validazione
+    mockValidationResult(true); // Validazione corretta
+
+    // Mock errore nel salvataggio dell'utente
+    jest
+      .spyOn(User.prototype, "save")
+      .mockRejectedValueOnce(new Error("Database error"));
+
+    // Mock `next`
+    const nextMock = jest.fn();
+
+    // Esegui il controller
+    await createUser(req as Request, res as unknown as Response, nextMock);
+
+    // Verifica che `next` venga chiamato con l'errore
+    expect(nextMock).toHaveBeenCalledWith(expect.any(Error));
+  }, 20000);
+
   // Add more test cases
-}); 
+});

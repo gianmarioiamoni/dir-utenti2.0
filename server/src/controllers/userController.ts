@@ -65,43 +65,89 @@ export const getUserById = async (
   }
 };
 
-// Create a new user
+// // Create a new user
+// export const createUser = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) => {
+//     try {
+//       // Validation
+//       const errors = validationResult(req);
+//       if (!errors.isEmpty()) {
+//         res.status(400).json({ errors: errors.array() });
+//         return;
+//       }
+
+//       const { nome, cognome, email, dataNascita, fotoProfilo } = req.body;
+
+//       // Verifica se l'email esiste già
+//       const existingUser = await User.findOne({ email });
+//       if (existingUser) {
+//         throw new CustomError(
+//           "Email già in uso. Utilizzare un altro indirizzo email.",
+//           409
+//         );
+//       }
+
+//       const newUser = new User({
+//         nome,
+//         cognome,
+//         email,
+//         dataNascita,
+//         fotoProfilo,
+//       });
+
+//       await newUser.save();
+
+//       res.status(201).json(newUser);
+//     } catch (err) {
+//     next(err);
+//   }
+// };
 export const createUser = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-    try {
-      // Validation
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        res.status(400).json({ errors: errors.array() });
-        return;
-      }
+  try {
+    // Validation
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      console.error("Errore di validazione:", errors.array());
+      res.status(400).json({ errors: errors.array() });
+      return;
+    }
 
-      const { nome, cognome, email, dataNascita, fotoProfilo } = req.body;
+    if (!req.body || Object.keys(req.body).length === 0) {
+      return next(
+        new CustomError("Nessun valore fornito nel body della richiesta.", 400)
+      );
+    }
 
-      // Verifica se l'email esiste già
-      const existingUser = await User.findOne({ email });
-      if (existingUser) {
-        throw new CustomError(
-          "Email già in uso. Utilizzare un altro indirizzo email.",
-          409
-        );
-      }
 
-      const newUser = new User({
-        nome,
-        cognome,
-        email,
-        dataNascita,
-        fotoProfilo,
-      });
+    const { nome, cognome, email, dataNascita, fotoProfilo } = req.body;
 
-      await newUser.save();
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      throw new CustomError(
+        "Email già in uso. Utilizzare un altro indirizzo email.",
+        409
+      );
+    }
 
-      res.status(201).json(newUser);
-    } catch (err) {
+    const newUser = new User({
+      nome,
+      cognome,
+      email,
+      dataNascita,
+      fotoProfilo,
+    });
+
+    await newUser.save();
+
+    res.status(201).json(newUser);
+  } catch (err) {
     next(err);
   }
 };
