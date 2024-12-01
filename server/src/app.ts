@@ -2,7 +2,8 @@ import express, { Express } from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 
-import { setupSwagger } from "./config/swagger";
+// import { setupSwagger } from "./config/swagger";
+import { swaggerDocs, swaggerUi } from "./config/swaggerConfig";
 
 import dotenv from "dotenv";
 dotenv.config();
@@ -27,15 +28,19 @@ app.use(express.json());
 const MONGODB_URI =
   process.env.MONGODB_URI || "mongodb://localhost:27017/dir-utenti";
 
+// Rotte per Swagger UI
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
 // Routes
 app.use("/api/users", userRoutes);
 app.use("/api/upload", uploadRoute);
 
 // Swagger
-setupSwagger(app);
+// setupSwagger(app);
 
 // Middleware for errors handling
 app.use(errorHandler); 
+
 
 
 // Connessione al database MongoDB
