@@ -1,5 +1,5 @@
 import { mock } from "jest-mock-extended";
-import { getUsers, getUserById } from "../controllers/userController";
+import { getUsers, getUserById, createUser } from "../controllers/userController";
 import { Request, Response, NextFunction } from "express";
 import User from "../models/User";
 
@@ -299,7 +299,54 @@ describe("getUserById controller with jest-mock-extended", () => {
     jest.restoreAllMocks();
   });
 
-
-
   // Add more test cases
 });
+
+
+describe("addUser controller with jest-mock-extended", () => {
+  it("should create a new user and return it with status 201", async () => {
+    const req = {
+      body: {
+        nome: "John",
+        cognome: "Doe",
+        email: "john.doe@example.com",
+        dataNascita: "1990-01-01",
+        fotoProfilo: "url_to_profile_picture",
+      },
+    } as unknown as Request;
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as unknown as Response;
+
+    const next = jest.fn() as NextFunction;
+
+    // Simulazione del salvataggio dell'utente (mock della funzione save)
+    jest.spyOn(User.prototype, "save").mockResolvedValueOnce({
+      nome: "John",
+      cognome: "Doe",
+      email: "john.doe@example.com",
+      dataNascita: "1990-01-01",
+      fotoProfilo: "url_to_profile_picture",
+    });
+
+    await createUser(req, res, next);
+
+    // Assicurati che le funzioni siano state chiamate
+    expect(res.status).toHaveBeenCalledWith(201);
+    expect(res.json).toHaveBeenCalledWith({
+      nome: "John",
+      cognome: "Doe",
+      email: "john.doe@example.com",
+      dataNascita: "1990-01-01",
+      fotoProfilo: "url_to_profile_picture",
+    });
+
+    // Ripristina i mock
+    jest.restoreAllMocks();
+  }, 10000); // Timeout del test aumentato a 10 secondi
+
+  
+  // Add more test cases
+}); 
