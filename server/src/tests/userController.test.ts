@@ -248,5 +248,23 @@ describe("getUserById controller with jest-mock-extended", () => {
     jest.restoreAllMocks();
   });
 
+  it("should call next with an error if the database operation fails", async () => {
+    const req = { params: { id: "validUserId" } } as unknown as Request;
+
+    const res = {} as unknown as Response;
+
+    const next = jest.fn() as NextFunction;
+
+    jest
+      .spyOn(User, "findById")
+      .mockRejectedValueOnce(new Error("Database error"));
+
+    await getUserById(req, res, next);
+
+    expect(next).toHaveBeenCalledWith(new Error("Database error"));
+
+    jest.restoreAllMocks();
+  });
+
   // Add more test cases
 });
