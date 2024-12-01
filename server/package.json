@@ -8,7 +8,8 @@
     "dev-norestart": "ts-node src/server.ts",
     "dev": "nodemon --watch src --exec ts-node src/server.ts",
     "seed": "ts-node seed.ts",
-    "test": "jest"
+    "test": "jest",
+    "generate-docs": "widdershins swagger.json -o api-docs.md"
   },
   "keywords": [],
   "author": "",

@@ -30,6 +30,10 @@ const MONGODB_URI =
 
 // Rotte per Swagger UI
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+app.get("/swagger.json", (req, res) => {
+  res.setHeader("Content-Type", "application/json");
+  res.send(swaggerDocs);
+});
 
 // Routes
 app.use("/api/users", userRoutes);
@@ -37,6 +41,7 @@ app.use("/api/upload", uploadRoute);
 
 // Swagger
 // setupSwagger(app);
+
 
 // Middleware for errors handling
 app.use(errorHandler); 
