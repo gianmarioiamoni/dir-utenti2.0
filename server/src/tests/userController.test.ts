@@ -1,5 +1,5 @@
 import { mock } from "jest-mock-extended";
-import { getUsers } from "../controllers/userController";
+import { getUsers, getUserById } from "../controllers/userController";
 import { Request, Response, NextFunction } from "express";
 import User from "../models/User";
 
@@ -133,15 +133,13 @@ describe("getUsers controller with jest-mock-extended", () => {
       () =>
         ({
           skip: jest.fn().mockReturnThis(),
-          limit: jest
-            .fn()
-            .mockResolvedValue([
-              {
-                firstName: "Jane",
-                lastName: "Doe",
-                email: "jane.doe@example.com",
-              },
-            ]),
+          limit: jest.fn().mockResolvedValue([
+            {
+              firstName: "Jane",
+              lastName: "Doe",
+              email: "jane.doe@example.com",
+            },
+          ]),
         } as any)
     );
 
@@ -163,6 +161,90 @@ describe("getUsers controller with jest-mock-extended", () => {
     expect(next).not.toHaveBeenCalled();
 
     // Ripristina i mock
+    jest.restoreAllMocks();
+  });
+
+  it("should return an empty list if no users are found", async () => {
+    const req = {
+      query: { page: "1", limit: "10" },
+    } as unknown as Request;
+
+    const res = {
+      json: jest.fn(),
+    } as unknown as Response;
+
+    const next = jest.fn() as NextFunction;
+
+    // Mock di User.find
+    const findMock = jest.spyOn(User, "find").mockReturnValueOnce({
+      skip: jest.fn().mockReturnThis(),
+      limit: jest.fn().mockResolvedValue([]),
+    } as any);
+
+    // Mock di User.countDocuments
+    jest.spyOn(User, "countDocuments").mockResolvedValueOnce(0);
+
+    await getUsers(req, res, next);
+
+    expect(findMock).toHaveBeenCalled(); // Verifica che il mock sia stato chiamato
+    expect(res.json).toHaveBeenCalledWith({
+      users: [],
+      total: 0,
+    });
+
+    jest.restoreAllMocks();
+  });
+
+
+  // Add more test cases
+});
+
+describe("getUserById controller with jest-mock-extended", () => {
+  it("should return the user if found", async () => {
+    const req = { params: { id: "validUserId" } } as unknown as Request;
+
+    const res = {
+      json: jest.fn(),
+    } as unknown as Response;
+
+    const next = jest.fn() as NextFunction;
+
+    jest.spyOn(User, "findById").mockResolvedValueOnce({
+      _id: "validUserId",
+      firstName: "John",
+      lastName: "Doe",
+      email: "john.doe@example.com",
+    } as any);
+
+    await getUserById(req, res, next);
+
+    expect(res.json).toHaveBeenCalledWith({
+      _id: "validUserId",
+      firstName: "John",
+      lastName: "Doe",
+      email: "john.doe@example.com",
+    });
+
+    jest.restoreAllMocks();
+  });
+
+  it("should return 404 if user is not found", async () => {
+    const req = { params: { id: "nonExistingUserId" } } as unknown as Request;
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as unknown as Response;
+
+    const next = jest.fn() as NextFunction;
+
+    jest.spyOn(User, "findById").mockResolvedValueOnce(null);
+
+    await getUserById(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({ message: "User not found" });
+
     jest.restoreAllMocks();
   });
 

@@ -27,7 +27,7 @@ export const getUsers = async (
     const users = await User.find({}, fields.toString().split(",").join(" "))
       .skip((Number(page) - 1) * Number(limit))
       .limit(Number(limit));
-
+    
     const total = await User.countDocuments();
 
     res.json({ users, total });
