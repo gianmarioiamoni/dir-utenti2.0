@@ -1,3 +1,4 @@
+/* global.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,17 +6,72 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --primary: #1e90ff; /* Azzurro per tema chiaro e scuro */
+  --secondary: #6c757d; /* Colore verde/grigio-blu per tema chiaro e scuro */
+  --accent: #ff9c42; /* Arancione caldo/brillante per tema chiaro */
+  
+  /* Tonalità intermedie di grigio */
+  --gray-light: #d3d3d3; /* Grigio chiaro intermedio */
+  --gray-dark: #7a7a7a;  /* Grigio scuro intermedio */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #1e1e1e;
+    --foreground: #e1dfdf;
+    --accent: #ff7f32; /* Arancione scuro per tema scuro */
+
+    /* Tonalità di grigio per tema scuro */
+    --gray-dark: #615f5f; /* Grigio chiaro per tema scuro */
+    --gray-light: #b3b3b3;  /* Grigio scuro per tema scuro */
   }
 }
 
-body {
+/* Personalizzazione dei bottoni */
+.btn-primary {
+  background-color: var(--primary);
   color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  text-align: center;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
+
+.btn-primary:hover {
+  background-color: var(--accent); /* Hover con colore accent */
+}
+
+.btn-secondary {
+  background-color: rgb(19, 164, 19);
+  color: var(--foreground);
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  text-align: center;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-secondary:hover {
+  background-color: var(--accent); /* Hover con colore accent */
+}
+
+/* Esempio per gli sfondi e le scritte secondarie */
+.bg-gray-light {
+  background-color: var(--gray-light);
+}
+
+.bg-gray-dark {
+  background-color: var(--gray-dark);
+}
+
+.text-gray-light {
+  color: var(--gray-light);
+}
+
+.text-gray-dark {
+  color: var(--gray-dark);
+}
+

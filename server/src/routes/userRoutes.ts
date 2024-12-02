@@ -3,6 +3,7 @@ import { validateUser } from "../validators/userValidator";
 
 import {
   getUsers,
+  getTotalUsers,
   getUserById,
   createUser,
 } from "../controllers/userController";
@@ -61,6 +62,27 @@ const router: Router = Router();
  *                   description: Numero totale di utenti disponibili.
  */
 router.get("/", getUsers);
+
+/**
+ * @swagger
+ * /total:
+ *   get:
+ *     summary: Ottieni il numero totale di utenti
+ *     description: Restituisce il numero totale di documenti nella collezione degli utenti.
+ *     tags:
+ *       - Users
+ *     responses:
+ *       200:
+ *         description: Numero totale di utenti restituito con successo.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: integer
+ *               example: 150
+ *       500:
+ *         description: Errore interno del server.
+ */
+router.get("/total", getTotalUsers);
 
 /**
  * @swagger

@@ -39,6 +39,22 @@ export const getUsers = async (
   }
 };
 
+// Get total number of users
+export const getTotalUsers = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const total = await User.countDocuments();
+    res.json( total );
+    return;
+  } catch (err) {
+    next(err);
+    return;
+  }
+};
+
 // Get user by ID
 export const getUserById = async (
   req: Request,
