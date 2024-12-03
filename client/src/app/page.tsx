@@ -1,15 +1,14 @@
 "use client"
-
 import {FC} from "react";
 
 import React from "react";
 import Link from "next/link";
 import { useUsers } from "@/hooks/useUsers";
 
-const Home: FC<{}> = () => {
-  const userCount = 5;
+const Home: FC<{}> = async () => {
   
   // const { userCount, isLoading, error } = useUsers();
+  const { userCount } = await useUsers();
 
   // if (isLoading) {
   //   return (
