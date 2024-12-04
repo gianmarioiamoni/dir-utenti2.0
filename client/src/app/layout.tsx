@@ -5,7 +5,7 @@ import "./globals.css";
 import { ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import { ToastContainer } from "react-toastify";
+import { ToastProvider } from "@/components/wrappers/ToastWrapper"
 import "react-toastify/dist/ReactToastify.css";
 
 import { useState } from "react";
@@ -18,7 +18,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <html lang="en">
         <body>
           {children}
-          <ToastContainer
+          <ToastProvider
             position="top-right" // Posizione del toast
             autoClose={5000}     // Tempo di auto-chiusura in millisecondi
             hideProgressBar={false}
