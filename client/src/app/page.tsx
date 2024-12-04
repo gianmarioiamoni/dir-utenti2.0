@@ -3,9 +3,12 @@
 import { FC } from "react";
 import Link from "next/link";
 import { useCount } from "@/hooks/useCount";
+import { useErrorHandling } from "@/hooks/useErrorHandling";
+import { useMessage } from "@/hooks/useMessage";
 
 const Home: FC = () => {
-  const { userCount, isLoading, isError } = useCount();
+  const { userCount, isLoading, isError, error } = useCount();
+  const { showError } = useMessage();
 
   if (isLoading) {
     return (
@@ -16,12 +19,15 @@ const Home: FC = () => {
   }
 
   if (isError) {
-    return (
-      <div className="min-h-screen flex flex-col justify-center items-center">
-        Errore nel caricamento
-      </div>
-    );
+    // return (
+    //   <div className="min-h-screen flex flex-col justify-center items-center">
+    //     Errore nel caricamento
+    //   </div>
+    // );
+    showError(error instanceof Error ? error.message : "Errore nel caricamento dati");
   }
+
+
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-background text-foreground px-4">

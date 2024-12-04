@@ -7,6 +7,7 @@ export function useCount() {
     data: userCount = 0,
     isLoading,
     isError,
+    error
   } = useQuery({
     queryKey: ["total"],
     queryFn: getTotalUsers,
@@ -17,5 +18,6 @@ export function useCount() {
     userCount,
     isLoading,
     isError,
+    error
   };
 }
