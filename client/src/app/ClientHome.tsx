@@ -1,7 +1,6 @@
 "use client"
 
 import Link from "next/link";
-import { toast } from 'react-toastify';
 import { useMessage } from '@/hooks/useMessage';
 import { useEffect } from 'react';
 
@@ -12,7 +11,7 @@ interface ClientHomeProps {
 
 export default function ClientHome({ userCount, error }: ClientHomeProps) {
     const { showError } = useMessage();
-    
+
     useEffect(() => {
         if (error) {
             showError(error);

@@ -1,23 +1,23 @@
 // src/hooks/useCount.ts
-import { useQuery } from "@tanstack/react-query";
 import { getTotalUsers } from "@/services/userServices";
 
 export function useCount() {
-  const {
-    data: userCount = 0,
-    isLoading,
-    isError,
-    error
-  } = useQuery({
-    queryKey: ["total"],
-    queryFn: getTotalUsers,
-    staleTime: 30000,
-  });
+  async function fetchUserCount() {
+    try {
+      const userCount = await getTotalUsers();
+      return { userCount, error: null };
+    } catch (error) {
+      return {
+        userCount: 0,
+        error:
+          error instanceof Error && error.message
+            ? error.message
+            : "Errore nel caricamento dati",
+      };
+    }
+  }
 
   return {
-    userCount,
-    isLoading,
-    isError,
-    error
+    fetchUserCount,
   };
 }
