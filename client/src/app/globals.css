@@ -18,7 +18,7 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #1e1e1e;
-    --foreground: #e1dfdf;
+    --foreground: #c9c6c6;
     --accent: #ff7f32; /* Arancione scuro per tema scuro */
 
     /* Tonalità di grigio per tema scuro */
@@ -26,6 +26,15 @@
     --gray-light: #b3b3b3;  /* Grigio scuro per tema scuro */
   }
 }
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+
+}
+
+
 
 /* Personalizzazione dei bottoni */
 .btn-primary {
@@ -58,7 +67,15 @@
   background-color: var(--accent); /* Hover con colore accent */
 }
 
-/* Esempio per gli sfondi e le scritte secondarie */
+.paging-number-btn {
+  @apply w-11 h-11 flex items-center justify-center rounded-full font-semibold bg-primary text-white
+}
+
+.paging-number-btn-inactive {
+  @apply w-11 h-11 flex items-center justify-center rounded-full text-sm font-semibold bg-gray-200 text-gray-600 hover:bg-gray-400
+}
+
+ /* Esempio per gli sfondi e le scritte secondarie */
 .bg-gray-light {
   background-color: var(--gray-light);
 }

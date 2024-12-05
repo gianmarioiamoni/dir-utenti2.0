@@ -3,20 +3,14 @@
 
 import "./globals.css";
 import { ReactNode } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import QueryProvider from "@/providers/QueryProvider";
 
 import { ToastProvider } from "@/components/wrappers/ToastWrapper"
 import "react-toastify/dist/ReactToastify.css";
-
-import { useState } from "react";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   // const [queryClient] = useState(() => new QueryClient());
 
   return (
-    // <QueryClientProvider client={queryClient}>
-    <QueryProvider>
       <html lang="en">
         <body>
 
@@ -36,7 +30,5 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 
         </body>
       </html>
-    </QueryProvider>
-    // </QueryClientProvider>
   );
 }

@@ -28,8 +28,10 @@ const Pagination: React.FC<PaginationProps> = ({
                 className={`
           px-4 py-2 mx-1 rounded 
           ${currentPage === page
-                        ? 'bg-primary text-white'
-                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}
+                        // ? 'bg-primary text-white rounded-full'
+                        // : 'bg-secondary text-gray-700 hover:bg-gray-300 rounded-full'}
+                        ? 'paging-number-btn'
+                        : 'paging-number-btn-inactive'}
         `}
             >
                 {page}
@@ -43,7 +45,8 @@ const Pagination: React.FC<PaginationProps> = ({
             {currentPage > 1 && (
                 <button
                     onClick={() => onPageChange(1)}
-                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+                    // className="px-4 py-2 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300"
+                    className="paging-number-btn-inactive"
                 >
                     {'<<'}
                 </button>
@@ -53,7 +56,8 @@ const Pagination: React.FC<PaginationProps> = ({
             {currentGroup > 1 && (
                 <button
                     onClick={() => onPageChange((currentGroup - 2) * 5 + 5)}
-                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+                    // className="px-4 py-2 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300"
+                    className="paging-number-btn-inactive"
                 >
                     {'<'}
                 </button>
@@ -66,7 +70,8 @@ const Pagination: React.FC<PaginationProps> = ({
             {currentGroup < totalGroups && (
                 <button
                     onClick={() => onPageChange(currentGroup * 5 + 1)}
-                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+                    // className="px-4 py-2 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300"
+                    className="paging-number-btn-inactive"
                 >
                     {'>'}
                 </button>
@@ -76,7 +81,8 @@ const Pagination: React.FC<PaginationProps> = ({
             {currentPage < totalPages && (
                 <button
                     onClick={() => onPageChange(totalPages)}
-                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+                    // className="px-4 py-2 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300"
+                    className="paging-number-btn-inactive"
                 >
                     {'>>'}
                 </button>
