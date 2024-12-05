@@ -4,7 +4,6 @@
 import "./globals.css";
 import { ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import QueryProvider from "@/providers/QueryProvider";
 
 import { ToastProvider } from "@/components/wrappers/ToastWrapper"
 import "react-toastify/dist/ReactToastify.css";
@@ -12,14 +11,12 @@ import "react-toastify/dist/ReactToastify.css";
 import { useState } from "react";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  // const [queryClient] = useState(() => new QueryClient());
+  const [queryClient] = useState(() => new QueryClient());
 
   return (
-    // <QueryClientProvider client={queryClient}>
-    <QueryProvider>
+    <QueryClientProvider client={queryClient}>
       <html lang="en">
         <body>
-
           {children}
           <ToastProvider
             position="top-right" // Posizione del toast
@@ -33,10 +30,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             pauseOnHover
             theme="colored" // Può essere "light", "dark" o "colored"
           />
-
         </body>
       </html>
-    </QueryProvider>
-    // </QueryClientProvider>
+    </QueryClientProvider>
   );
 }
