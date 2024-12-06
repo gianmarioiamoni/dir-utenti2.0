@@ -7,13 +7,15 @@ import { ReactNode } from "react";
 import { ToastProvider } from "@/components/wrappers/ToastWrapper"
 import "react-toastify/dist/ReactToastify.css";
 
+import { Providers } from './providers'
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   // const [queryClient] = useState(() => new QueryClient());
 
   return (
-      <html lang="en">
-        <body>
-
+    <html lang="en">
+      <body>
+        <Providers>
           {children}
           <ToastProvider
             position="top-right" // Posizione del toast
@@ -27,8 +29,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             pauseOnHover
             theme="colored" // Può essere "light", "dark" o "colored"
           />
-
-        </body>
-      </html>
+        </Providers>
+      </body>
+    </html>
   );
 }

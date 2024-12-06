@@ -19,6 +19,8 @@
   :root {
     --background: #1e1e1e;
     --foreground: #c9c6c6;
+    --primary: #1e90ff; /* Azzurro per tema chiaro e scuro */
+    --secondary: #6c757d; /* Colore verde/grigio-blu per tema chiaro e scuro */
     --accent: #ff7f32; /* Arancione scuro per tema scuro */
 
     /* Tonalità di grigio per tema scuro */

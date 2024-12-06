@@ -18,12 +18,21 @@ const UsersPage: React.FC = () => {
 
     return (
         <div className="container flex flex-col min-h-screen px-8 py-8 bg-background text-foreground">
-            <h1 className="text-3xl font-bold mb-6">Lista Utenti</h1>
+            <div className="flex justify-between items-center mb-6">
+                <h1 className="text-3xl font-bold">Lista Utenti</h1>
+                <button
+                    className="btn-primary"
+                    onClick={() => {/* Gestisci l'aggiunta di un nuovo utente */ }}
+                >
+                    Aggiungi utente
+                </button>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {data?.users.map((user) => (
                     <UserCard
                         key={user._id}
+                        _id={user._id}
                         nome={user.nome}
                         cognome={user.cognome}
                         email={user.email}
