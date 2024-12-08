@@ -5,9 +5,11 @@ import { FC } from "react";
  *
  * @typedef {Object} LoaderProps
  * @property {boolean} isLoading - Indica se il caricamento è in corso.
+ * @property {string} [msg] - Messaggio da visualizzare durante il caricamento.
  */
 interface LoaderProps {
     isLoading: boolean;
+    msg?: string;
 }
 
 /**
@@ -20,7 +22,7 @@ interface LoaderProps {
  * @example
  * <Loader isLoading={true} />
  */
-const Loader: FC<LoaderProps> = ({ isLoading }: LoaderProps) => {
+const Loader: FC<LoaderProps> = ({ isLoading, msg = "Caricamento Utenti..." }: LoaderProps) => {
     return isLoading ? (
         <div className="flex flex-col items-center justify-center loader-container">
             {/* Animazione caricamento */}

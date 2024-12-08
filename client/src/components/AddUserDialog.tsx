@@ -1,5 +1,6 @@
 import React, { FC } from "react";
 import { useUserForm } from "../hooks/useUserForm";
+import Loader from "./Loader";
 
 interface AddUserDialogProps {
     isOpen: boolean;
@@ -108,7 +109,7 @@ const AddUserDialog: FC<AddUserDialogProps> = ({ isOpen, onClose }) => {
                     </div>
 
                     {loading ? (
-                        <p>Caricamento...</p>
+                        <Loader isLoading={loading} msg="Caricamento Foto Profilo..." />
                     ) : (
                         formData.fotoProfilo && (
                             <img
