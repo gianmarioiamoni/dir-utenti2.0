@@ -17,6 +17,9 @@ module.exports = {
         // Aggiunta delle tonalità di grigio intermedio
         "gray-light": "var(--gray-light)",
         "gray-dark": "var(--gray-dark)",
+        // Errori
+        "bg-error": "var(--bg-error)",
+        "text-error": "var(--text-error)",
       },
       // Estensioni per i bottoni
       buttonColors: {

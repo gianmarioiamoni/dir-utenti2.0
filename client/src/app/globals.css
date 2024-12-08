@@ -6,26 +6,42 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --primary: #1e90ff; /* Azzurro per tema chiaro e scuro */
-  --secondary: #6c757d; /* Colore verde/grigio-blu per tema chiaro e scuro */
-  --accent: #ff9c42; /* Arancione caldo/brillante per tema chiaro */
+  --primary: #1e90ff; 
+  --secondary: #6c757d; 
+  --accent: #ff9c42; 
   
   /* Tonalità intermedie di grigio */
-  --gray-light: #d3d3d3; /* Grigio chiaro intermedio */
-  --gray-dark: #7a7a7a;  /* Grigio scuro intermedio */
+  --gray-light: #d3d3d3; 
+  --gray-dark: #7a7a7a; 
+  
+  /* Errore */
+  --bg-error: #f1b3b9;
+  --text-error: #d32f2f;
+
+  /* Modale */
+  --bg-modal: #ffffffa4;
+
+  
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #1e1e1e;
     --foreground: #c9c6c6;
-    --primary: #1e90ff; /* Azzurro per tema chiaro e scuro */
-    --secondary: #6c757d; /* Colore verde/grigio-blu per tema chiaro e scuro */
-    --accent: #ff7f32; /* Arancione scuro per tema scuro */
+    --primary: #1e90ff; 
+    --secondary: #6c757d; 
+    --accent: #ff7f32; 
 
     /* Tonalità di grigio per tema scuro */
-    --gray-dark: #615f5f; /* Grigio chiaro per tema scuro */
-    --gray-light: #b3b3b3;  /* Grigio scuro per tema scuro */
+    --gray-light: #b3b3b3;  
+    --gray-dark: #615f5f; 
+
+    /* Errore */
+    --bg-error: #f1b3b9;
+    --text-error: #d32f2f;
+
+    /* Modale */
+    --bg-modal: rgba(26, 26, 26, 0.5);
   }
 }
 

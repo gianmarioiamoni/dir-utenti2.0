@@ -1,4 +1,4 @@
-import React, { FC, useEffect} from "react";
+import React, { FC } from "react";
 import { useUserForm } from "../hooks/useUserForm";
 
 interface AddUserDialogProps {
@@ -14,13 +14,8 @@ const AddUserDialog: FC<AddUserDialogProps> = ({ isOpen, onClose }) => {
         handleSubmit,
         handleCancel, 
         loading,
-        // error,
         validationErrors } = useUserForm({ onClose });
     
-    useEffect(() => {
-        console.log("AddUserDialog - validationErrors", validationErrors)
-    }, [validationErrors])
-
     if (!isOpen) return null;
 
 
@@ -32,7 +27,7 @@ const AddUserDialog: FC<AddUserDialogProps> = ({ isOpen, onClose }) => {
 
                 {/* Area Errori */}
                 {validationErrors?.serverError && (
-                    <div className="bg-red-200 text-red-600 p-2 rounded mb-4">
+                    <div className="bg-bg-error text-text-error p-2 rounded mb-4">
                         <ul>
                             {Object.keys(validationErrors).map((key) => (
                                 <li key={key}>{validationErrors[key]}</li>
@@ -49,9 +44,9 @@ const AddUserDialog: FC<AddUserDialogProps> = ({ isOpen, onClose }) => {
                         name="nome"
                         value={formData.nome}
                         onChange={handleChange}
-                        className={`w-full text-gray-dark p-2 border ${validationErrors?.nome ? "border-red-500" : "border-gray-light"} rounded`}
+                        className={`w-full text-gray-dark p-2 border ${validationErrors?.nome ? "border-text-error" : "border-gray-light"} rounded`}
                     />
-                    {validationErrors?.nome && <p className="text-red-500 text-sm">{validationErrors?.nome}</p>}
+                    {validationErrors?.nome && <p className="text-text-error text-sm">{validationErrors?.nome}</p>}
                 </div>
 
                 {/* Cognome */}
@@ -62,9 +57,9 @@ const AddUserDialog: FC<AddUserDialogProps> = ({ isOpen, onClose }) => {
                         name="cognome"
                         value={formData.cognome}
                         onChange={handleChange}
-                        className={`w-full text-gray-dark p-2 border ${validationErrors?.cognome ? "border-red-500" : "border-gray-light"} rounded`}
+                        className={`w-full text-gray-dark p-2 border ${validationErrors?.cognome ? "border-text-error" : "border-gray-light"} rounded`}
                     />
-                    {validationErrors?.cognome && <p className="text-red-500 text-sm">{validationErrors?.cognome}</p>}
+                    {validationErrors?.cognome && <p className="text-text-error text-sm">{validationErrors?.cognome}</p>}
                 </div>
 
                 {/* Email */}
@@ -88,16 +83,17 @@ const AddUserDialog: FC<AddUserDialogProps> = ({ isOpen, onClose }) => {
                         id="dataNascita"
                         value={formData.dataNascita}
                         onChange={handleChange}
-                        className={`w-full p-2 text-gray-dark border ${validationErrors?.dataNascita ? "border-red-500" : "border-gray-light"} rounded`}
+                        className={`w-full p-2 text-gray-dark border ${validationErrors?.dataNascita ? "border-text-error" : "border-gray-light"} rounded`}
                     />
-                    {validationErrors?.dataNascita && <p className="text-red-500 text-sm">{validationErrors?.dataNascita}</p>}
+                    {validationErrors?.dataNascita && <p className="text-text-error text-sm">{validationErrors?.dataNascita}</p>}
                 </div>
 
                 {/* Foto Profilo */}
                 <div className="flex flex-col items-center gap-2">
                     <div className="mb-4">
                         <label
-                            className="bg-blue-500 text-white p-2 rounded cursor-pointer hover:bg-blue-600"
+                            // className="bg-blue-500 text-white p-2 rounded cursor-pointer hover:bg-blue-600"
+                            className="btn-primary cursor-pointer"
                         >
                             Carica Foto Profilo
                             <input
