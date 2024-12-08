@@ -31,14 +31,6 @@ export const useUserForm = ({ onClose }: useUserFormProps) => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    // if (name === "dataNascita") {
-    //   setFormData((prev) => ({
-    //     ...prev,
-    //     [name]: new Date(value).toISOString(),
-    //   }));
-    // } else {
-    //   setFormData((prev) => ({ ...prev, [name]: value }));
-    // }
     setFormData((prev) => ({ ...prev, [name]: value }) as UserData);
   };
 
@@ -55,16 +47,25 @@ export const useUserForm = ({ onClose }: useUserFormProps) => {
 
   const handleSubmit = async () => {
     if (!validateForm()) return;
-    // se fotoProfilo è "", togli fotoProfilo da formData
+    // se fotoProfilo è "", toglie fotoProfilo da formData
     if (formData.fotoProfilo === "") {
       delete formData.fotoProfilo;
     }
     
     try {
-      await addUser(formData);
+      const response = await addUser(formData);
+      console.log("useUserForm - response:", response);
       handleCancel();
-    } catch (e) {
-      console.error(e);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.log("useUserForm - err:", err);
+        setValidationErrors((prev) => ({
+          ...(prev ?? {}),
+          serverError: err.message,
+        }));
+      } else {
+        console.error("An unknown error occurred:", err);
+      }
     }
   };
 

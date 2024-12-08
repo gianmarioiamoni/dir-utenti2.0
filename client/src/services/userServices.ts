@@ -52,27 +52,13 @@ export const calculateAge = (birthDate: Date): number => {
 
 
 export const addUser = async (userData: UserData) => {
-  // console.log("addUser - userData", userData);
-  // // const response = await axios.post(`${API_URL}`, userData, {
-  // //   headers: { "Content-Type": "multipart/form-data" },
-  // // });
-  // const response = await axios.post(`${API_URL}`, userData);
-  // return response.data;
-
   try {
     const response = await axios.post(`${API_URL}`, userData);
-
-    // Check if response contains status 409 (email già in uso)
-    // if (response.status === 409) {
-    //   throw new Error("Email già in uso.");
-    // }
+    console.log("addUser: response", response);
     return response.data;
   } catch (error: any) {
-    // if (error.response?.status === 409) {
-    //   throw new Error("Email già in uso. Utilizzare un altro indirizzo email.");
-    // }
-    // throw new Error("Errore durante l'aggiunta dell'utente.");
-    return error;
+    console.log("addUser: error", error);
+    throw new Error(error.response?.data?.message || "Errore nella creazione utente.");
   }
 };
 

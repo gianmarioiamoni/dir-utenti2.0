@@ -30,16 +30,16 @@ const AddUserDialog: FC<AddUserDialogProps> = ({ isOpen, onClose }) => {
                 
                 <h2 className="text-xl font-semibold mb-4">Aggiungi Nuovo Utente</h2>
 
-                {/* // Area Errori
-                {error && (
+                {/* Area Errori */}
+                {validationErrors?.serverError && (
                     <div className="bg-red-200 text-red-600 p-2 rounded mb-4">
                         <ul>
-                            {Object.keys(errors).map((key) => (
-                                <li key={key}>{errors[key]}</li>
+                            {Object.keys(validationErrors).map((key) => (
+                                <li key={key}>{validationErrors[key]}</li>
                             ))}
                         </ul>
                     </div>
-                )} */}
+                )}
 
                 {/* Nome */}
                 <div className="mb-4">
@@ -49,7 +49,7 @@ const AddUserDialog: FC<AddUserDialogProps> = ({ isOpen, onClose }) => {
                         name="nome"
                         value={formData.nome}
                         onChange={handleChange}
-                        className={`w-full p-2 border ${validationErrors?.nome ? "border-red-500" : "border-gray-light"} rounded`}
+                        className={`w-full text-gray-dark p-2 border ${validationErrors?.nome ? "border-red-500" : "border-gray-light"} rounded`}
                     />
                     {validationErrors?.nome && <p className="text-red-500 text-sm">{validationErrors?.nome}</p>}
                 </div>
@@ -62,7 +62,7 @@ const AddUserDialog: FC<AddUserDialogProps> = ({ isOpen, onClose }) => {
                         name="cognome"
                         value={formData.cognome}
                         onChange={handleChange}
-                        className={`w-full p-2 border ${validationErrors?.cognome ? "border-red-500" : "border-gray-light"} rounded`}
+                        className={`w-full text-gray-dark p-2 border ${validationErrors?.cognome ? "border-red-500" : "border-gray-light"} rounded`}
                     />
                     {validationErrors?.cognome && <p className="text-red-500 text-sm">{validationErrors?.cognome}</p>}
                 </div>
@@ -75,7 +75,7 @@ const AddUserDialog: FC<AddUserDialogProps> = ({ isOpen, onClose }) => {
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
-                        className="w-full p-2 border border-gray-light rounded"
+                        className="w-full text-gray-dark p-2 border border-gray-light rounded"
                     />
                 </div>
 
@@ -88,7 +88,7 @@ const AddUserDialog: FC<AddUserDialogProps> = ({ isOpen, onClose }) => {
                         id="dataNascita"
                         value={formData.dataNascita}
                         onChange={handleChange}
-                        className={`w-full p-2 border ${validationErrors?.dataNascita ? "border-red-500" : "border-gray-light"} rounded`}
+                        className={`w-full p-2 text-gray-dark border ${validationErrors?.dataNascita ? "border-red-500" : "border-gray-light"} rounded`}
                     />
                     {validationErrors?.dataNascita && <p className="text-red-500 text-sm">{validationErrors?.dataNascita}</p>}
                 </div>
