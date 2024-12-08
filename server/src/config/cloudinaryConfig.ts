@@ -4,9 +4,9 @@ import multer from "multer";
 
 // Configurazione di Cloudinary
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME, // Inserisci nel tuo .env
-  api_key: process.env.CLOUDINARY_API_KEY, // Inserisci nel tuo .env
-  api_secret: process.env.CLOUDINARY_API_SECRET, // Inserisci nel tuo .env
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
+  api_key: process.env.CLOUDINARY_API_KEY, 
+  api_secret: process.env.CLOUDINARY_API_SECRET, 
 });
 
 // Configurazione dello storage di Multer con Cloudinary

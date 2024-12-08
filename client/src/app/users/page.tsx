@@ -4,13 +4,20 @@ import React, { useState } from 'react';
 import { useUsers } from '@/hooks/useUsers';
 import UserCard from '@/components/UserCard';
 import Pagination from '@/components/Pagination';
+import AddUserDialog from '@/components/AddUserDialog';
+
 
 const UsersPage: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const { data, isLoading, isError, error } = useUsers(currentPage);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
+    };
+
+    const onClose = () => {
+        setIsModalOpen(false);
     };
 
     if (isLoading) return <div className="text-center p-4">Caricamento...</div>;
@@ -22,11 +29,14 @@ const UsersPage: React.FC = () => {
                 <h1 className="text-3xl font-bold">Lista Utenti</h1>
                 <button
                     className="btn-primary"
-                    onClick={() => {/* Gestisci l'aggiunta di un nuovo utente */ }}
+                    onClick={() => setIsModalOpen(true)}
                 >
                     Aggiungi utente
                 </button>
             </div>
+
+            {/* Modale */}
+            <AddUserDialog isOpen={isModalOpen} onClose={onClose} />
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {data?.users.map((user) => (

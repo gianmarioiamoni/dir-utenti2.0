@@ -86,6 +86,7 @@ export const createUser = async (
   res: Response,
   next: NextFunction
 ) => {
+  console.log("req.body", req.body);
   try {
     // Validation
     const errors = validationResult(req);

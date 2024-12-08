@@ -1,9 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import useSWR from "swr";
 import { fetchUsers } from "@/services/userServices";
+import { useMessage } from "@/hooks/useMessage";
+import { addUser } from "@/services/userServices";
+import { User, UserData } from "@/interfaces/userInterfaces";
 
 export const useUsers = (page: number) => {
+  const [addUserError, setAddUserError] = useState<string | null>(null);
   const { data, error, isLoading, isValidating, mutate } = useSWR(
     ["users", page],
     () => fetchUsers(page),
@@ -15,13 +20,35 @@ export const useUsers = (page: number) => {
     }
   );
 
+  const addUser = async (userData: FormData) => {
+    try {
+      const newUser = await addUser(userData);
+      mutate(
+        (currentData: any) => ({
+          ...currentData,
+          users: [newUser, ...currentData.users],
+        }),
+        false
+      );
+      setAddUserError(null);
+    } catch (error: any) {
+      setAddUserError(
+        error.response?.data?.message || "Errore nell'aggiunta utente."
+      );
+      throw error;
+    }
+  };
+
+
   return {
     data,
-      error,
+    error,
     isError: !!error,
     // isLoading: !data && !error,
     isLoading,
     isValidating,
-    mutate, // Usalo per aggiornare manualmente i dati
+    mutate, // Per aggiornare manualmente i dati
+    addUser,
+    addUserError
   };
 };

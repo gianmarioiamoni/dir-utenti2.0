@@ -1,5 +1,5 @@
 import axios from "axios";
-import { User, UsersResponse } from "@/interfaces/userInterfaces";
+import { User, UserData, UsersResponse } from "@/interfaces/userInterfaces";
 
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/users";
@@ -48,4 +48,51 @@ export const calculateAge = (birthDate: Date): number => {
   }
 
   return age;
+};
+
+
+export const addUser = async (userData: UserData) => {
+  // console.log("addUser - userData", userData);
+  // // const response = await axios.post(`${API_URL}`, userData, {
+  // //   headers: { "Content-Type": "multipart/form-data" },
+  // // });
+  // const response = await axios.post(`${API_URL}`, userData);
+  // return response.data;
+
+  try {
+    const response = await axios.post(`${API_URL}`, userData);
+
+    // Check if response contains status 409 (email già in uso)
+    // if (response.status === 409) {
+    //   throw new Error("Email già in uso.");
+    // }
+    return response.data;
+  } catch (error: any) {
+    // if (error.response?.status === 409) {
+    //   throw new Error("Email già in uso. Utilizzare un altro indirizzo email.");
+    // }
+    // throw new Error("Errore durante l'aggiunta dell'utente.");
+    return error;
+  }
+};
+
+
+export const uploadProfileImage = async (file: File) => {
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append(
+      "upload_preset",
+      process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || ""
+    );
+
+    const response = await axios.post(
+      `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+      formData
+    );
+
+    return response.data.secure_url;
+  } catch (error) {
+    throw error;
+  }
 };
