@@ -1,7 +1,10 @@
 "use client";
 
 import React, { useState } from 'react';
+
 import { useUsers } from '@/hooks/useUsers';
+import { useMessage } from '@/hooks/useMessage';
+
 import UserCard from '@/components/UserCard';
 import Pagination from '@/components/Pagination';
 import AddUserDialog from '@/components/AddUserDialog';
@@ -12,6 +15,7 @@ const UsersPage: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const { data, isLoading, isError, error } = useUsers(currentPage);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const { showError } = useMessage();
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
@@ -20,9 +24,12 @@ const UsersPage: React.FC = () => {
     const onClose = () => {
         setIsModalOpen(false);
     };
+    
 
-    // if (isLoading) return <div className="text-center p-4">Caricamento...</div>;
-    if (isError) return <div className="text-center p-4 text-red-500">Errore nel caricamento degli utenti</div>;
+    if (isError) {
+        showError(error?.message || "Errore caricamento utenti");
+        return;
+    }
 
     return (
         <div className="container flex flex-col min-h-screen px-8 py-8 bg-background text-foreground">

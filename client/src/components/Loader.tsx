@@ -27,7 +27,7 @@ const Loader: FC<LoaderProps> = ({ isLoading, msg = "Caricamento Utenti..." }: L
         <div className="flex flex-col items-center justify-center loader-container">
             {/* Animazione caricamento */}
             <div className="loader" />
-            <p className="loader-text">Caricamento Utenti...</p>
+            <p className="loader-text">{msg}</p>
         </div>
     ) : null;
 };

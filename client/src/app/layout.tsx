@@ -19,7 +19,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           {children}
           <ToastProvider
             position="top-right" // Posizione del toast
-            autoClose={5000}     // Tempo di auto-chiusura in millisecondi
+            autoClose={3000}     // Tempo di auto-chiusura in millisecondi
             hideProgressBar={false}
             newestOnTop={false}
             closeOnClick

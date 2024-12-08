@@ -6,11 +6,11 @@ import { validateUser } from "@/utils/validation";
 import { UserData } from "@/interfaces/userInterfaces";
 
 interface useUserFormProps {
-    onClose: () => void;
+  onClose: () => void;
+  onSuccess: () => void;
 }
 
-
-export const useUserForm = ({ onClose }: useUserFormProps) => {
+export const useUserForm = ({ onClose, onSuccess }: useUserFormProps) => {
   const [formData, setFormData] = useState<UserData>({} as UserData);
 
   const [loading, setLoading] = useState(false);
@@ -23,6 +23,10 @@ export const useUserForm = ({ onClose }: useUserFormProps) => {
       setFormData((prev) => ({ ...prev, fotoProfilo: fileUrl }) as UserData); // Aggiorna il campo della foto
     } catch (error) {
       console.error("Errore durante l'upload del file:", error);
+      setValidationErrors((prev) => ({
+        ...prev,
+        serverError: "Errore durante l'upload del file",
+      }))
     } finally {
       setLoading(false);
     }
@@ -54,7 +58,10 @@ export const useUserForm = ({ onClose }: useUserFormProps) => {
     
     try {
       const response = await addUser(formData);
-      console.log("useUserForm - response:", response);
+      // Chiama il callback onSuccess se presente
+      if (onSuccess) {
+        onSuccess();
+      }
       handleCancel();
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -65,6 +72,10 @@ export const useUserForm = ({ onClose }: useUserFormProps) => {
         }));
       } else {
         console.error("An unknown error occurred:", err);
+        setValidationErrors((prev) => ({
+          ...(prev ?? {}),
+          serverError: "Errore: qualcosa e' andato storto",
+        }));
       }
     }
   };

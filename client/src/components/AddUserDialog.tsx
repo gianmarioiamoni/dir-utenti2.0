@@ -1,13 +1,17 @@
 import React, { FC } from "react";
-import { useUserForm } from "../hooks/useUserForm";
+import { useUserForm } from "@/hooks/useUserForm";
 import Loader from "./Loader";
+import { useMessage } from "@/hooks/useMessage";
 
 interface AddUserDialogProps {
     isOpen: boolean;
     onClose: () => void;
 }
 
+
+
 const AddUserDialog: FC<AddUserDialogProps> = ({ isOpen, onClose }) => {
+    const { showSuccess } = useMessage();
     const {
         formData,
         handleChange,
@@ -15,7 +19,7 @@ const AddUserDialog: FC<AddUserDialogProps> = ({ isOpen, onClose }) => {
         handleSubmit,
         handleCancel, 
         loading,
-        validationErrors } = useUserForm({ onClose });
+        validationErrors } = useUserForm({ onClose, onSuccess: () => showSuccess("Utente aggiunto con successo!") });
     
     if (!isOpen) return null;
 
