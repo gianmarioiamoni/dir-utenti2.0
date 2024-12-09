@@ -528,3 +528,105 @@ describe("addUser controller", () => {
 
   // Add more test cases
 });
+
+import { deleteUser } from "../controllers/userController"; 
+import { isValidObjectId } from "mongoose";
+
+jest.mock("mongoose", () => ({
+  ...jest.requireActual("mongoose"),
+  isValidObjectId: jest.fn(),
+}));
+
+describe("deleteUser controller", () => {
+  it("should delete a user successfully", async () => {
+    // Mock di isValidObjectId e User.findByIdAndDelete
+    (isValidObjectId as jest.Mock).mockReturnValue(true);
+    const mockUser = { id: "12345", name: "John Doe" };
+    jest.spyOn(User, "findByIdAndDelete").mockResolvedValue(mockUser);
+
+    // Mock di req, res e next
+    const req = { params: { id: "12345" } } as unknown as Request;
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as unknown as Response;
+    const next = jest.fn() as NextFunction;
+
+    await deleteUser(req, res, next);
+
+    // Verifiche
+    expect(isValidObjectId).toHaveBeenCalledWith("12345");
+    expect(User.findByIdAndDelete).toHaveBeenCalledWith("12345");
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Utente cancellato con successo",
+    });
+    expect(next).not.toHaveBeenCalled();
+
+    jest.restoreAllMocks();
+  });
+
+  it("should return 404 if user is not found", async () => {
+    (isValidObjectId as jest.Mock).mockReturnValue(true);
+    jest.spyOn(User, "findByIdAndDelete").mockResolvedValue(null);
+
+    const req = { params: { id: "12345" } } as unknown as Request;
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as unknown as Response;
+    const next = jest.fn() as NextFunction;
+
+    await deleteUser(req, res, next);
+
+    expect(isValidObjectId).toHaveBeenCalledWith("12345");
+    expect(User.findByIdAndDelete).toHaveBeenCalledWith("12345");
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({ message: "Utente non trovato" });
+    expect(next).not.toHaveBeenCalled();
+
+    jest.restoreAllMocks();
+  });
+
+  it("should return 400 if ID format is invalid", async () => {
+    (isValidObjectId as jest.Mock).mockReturnValue(false);
+
+    const req = { params: { id: "invalid-id" } } as unknown as Request;
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as unknown as Response;
+    const next = jest.fn() as NextFunction;
+
+    await deleteUser(req, res, next);
+
+    expect(isValidObjectId).toHaveBeenCalledWith("invalid-id");
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Invalid user ID format",
+    });
+    expect(next).not.toHaveBeenCalled();
+
+    jest.restoreAllMocks();
+  });
+
+  it("should handle errors gracefully", async () => {
+    (isValidObjectId as jest.Mock).mockReturnValue(true);
+    jest.spyOn(User, "findByIdAndDelete").mockImplementation(() => {
+      throw new Error("Database error");
+    });
+
+    const req = { params: { id: "12345" } } as unknown as Request;
+    const res = { status: jest.fn(), json: jest.fn() } as unknown as Response;
+    const next = jest.fn() as NextFunction;
+
+    await deleteUser(req, res, next);
+
+    expect(isValidObjectId).toHaveBeenCalledWith("12345");
+    expect(User.findByIdAndDelete).toHaveBeenCalledWith("12345");
+    expect(next).toHaveBeenCalledWith(new Error("Database error"));
+
+    jest.restoreAllMocks();
+  });
+});
+
