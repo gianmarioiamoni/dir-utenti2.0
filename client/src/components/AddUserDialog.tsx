@@ -25,7 +25,7 @@ const AddUserDialog: FC<AddUserDialogProps> = ({ isOpen, onClose }) => {
 
 
     return (
-        <div className="fixed inset-0 bg-gray-700 bg-opacity-50 flex justify-center items-center z-50">
+        <div className="fixed inset-0 bg-background bg-opacity-50 flex justify-center items-center z-50">
             <div className="bg-background p-6 rounded-lg shadow-lg max-w-lg w-full relative z-60">
                 
                 <h2 className="text-xl font-semibold mb-4">Aggiungi Nuovo Utente</h2>

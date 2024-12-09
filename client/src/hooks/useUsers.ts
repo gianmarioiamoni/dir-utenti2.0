@@ -1,9 +1,21 @@
 "use client";
 
+import { useState } from "react";
 import useSWR from "swr";
 import { fetchUsers } from "@/services/userServices";
 
 export const useUsers = (page: number) => {
+  
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const onCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const onOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
   const { data, error, isLoading, isValidating, mutate } = useSWR(
     ["users", page],
     () => fetchUsers(page),
@@ -18,6 +30,9 @@ export const useUsers = (page: number) => {
 
   return {
     data,
+    isModalOpen,
+    onCloseModal,
+    onOpenModal,
     error,
     isError: !!error,
     // isLoading: !data && !error,

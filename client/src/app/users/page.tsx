@@ -12,19 +12,11 @@ import Loader from '@/components/Loader';
 
 
 const UsersPage: React.FC = () => {
+
     const [currentPage, setCurrentPage] = useState(1);
-    const { data, isLoading, isError, error } = useUsers(currentPage);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const { data, isModalOpen, onCloseModal, onOpenModal, isLoading, isError, error } = useUsers(currentPage);
     const { showError } = useMessage();
-
-    const handlePageChange = (page: number) => {
-        setCurrentPage(page);
-    };
-
-    const onClose = () => {
-        setIsModalOpen(false);
-    };
-    
 
     if (isError) {
         showError(error?.message || "Errore caricamento utenti");
@@ -35,7 +27,7 @@ const UsersPage: React.FC = () => {
         <div className="container flex flex-col min-h-screen px-8 py-8 bg-background text-foreground">
 
             {/* Modale */}
-            <AddUserDialog isOpen={isModalOpen} onClose={onClose} />
+            <AddUserDialog isOpen={isModalOpen} onClose={onCloseModal} />
 
             {/* Mostra il loader o lista utenti */}
             {isLoading ? (
@@ -48,7 +40,7 @@ const UsersPage: React.FC = () => {
                         <h1 className="text-3xl font-bold">Lista Utenti</h1>
                         <button
                             className="btn-primary"
-                            onClick={() => setIsModalOpen(true)}
+                            onClick={onOpenModal}
                         >
                             Aggiungi utente
                         </button>
@@ -72,7 +64,8 @@ const UsersPage: React.FC = () => {
                             <Pagination
                                 currentPage={currentPage}
                                 totalPages={Math.ceil(data.total / 10)}
-                                onPageChange={handlePageChange}
+                                // onPageChange={handlePageChange}
+                                onPageChange={setCurrentPage}
                             />
                         </div>
 

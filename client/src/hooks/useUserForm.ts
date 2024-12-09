@@ -11,7 +11,13 @@ interface useUserFormProps {
 }
 
 export const useUserForm = ({ onClose, onSuccess }: useUserFormProps) => {
-  const [formData, setFormData] = useState<UserData>({} as UserData);
+  const [formData, setFormData] = useState<UserData>({
+      nome: "",
+      cognome: "",
+      email: "",
+      dataNascita: "",
+      fotoProfilo: "",
+    } as UserData);
 
   const [loading, setLoading] = useState(false);
   const [validationErrors, setValidationErrors] = useState<Record<string, string> | null>(null);
@@ -31,7 +37,6 @@ export const useUserForm = ({ onClose, onSuccess }: useUserFormProps) => {
       setLoading(false);
     }
   };
-
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

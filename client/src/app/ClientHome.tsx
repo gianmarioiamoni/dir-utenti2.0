@@ -14,8 +14,8 @@ interface ClientHomeProps {
 }
 
 export default function ClientHome({ userCount, error }: ClientHomeProps) {
+    const { onCloseModal, onOpenModal, isModalOpen } = useUsers(1);
     const { showError } = useMessage();
-    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         if (error) {
@@ -23,15 +23,12 @@ export default function ClientHome({ userCount, error }: ClientHomeProps) {
         }
     }, [error]);
 
-    const onClose = () => {
-        setIsModalOpen(false);
-    };
 
     return (
         <div className="min-h-screen flex flex-col justify-center items-center bg-background text-foreground px-4">
             
             {/* Modale */}
-            <AddUserDialog isOpen={isModalOpen} onClose={onClose} />
+            <AddUserDialog isOpen={isModalOpen} onClose={onCloseModal} />
             
             {/* Contenuti Home Page */}
             <div className="w-full max-w-md text-center">
@@ -59,7 +56,7 @@ export default function ClientHome({ userCount, error }: ClientHomeProps) {
 
                             <button
                                 className="btn-secondary"
-                                onClick={() => setIsModalOpen(true)}
+                                onClick={onOpenModal}
                             >
                                 Aggiungi utente
                             </button>
@@ -67,7 +64,7 @@ export default function ClientHome({ userCount, error }: ClientHomeProps) {
                     ) : (
                             <button
                                 className="btn-secondary"
-                                onClick={() => setIsModalOpen(true)}
+                                onClick={onOpenModal}
                             >
                                 Aggiungi utente
                             </button>
