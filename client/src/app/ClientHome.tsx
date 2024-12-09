@@ -1,8 +1,12 @@
 "use client"
 
+import { useState, useEffect } from 'react';
 import Link from "next/link";
+
+import { useUsers } from '@/hooks/useUsers';
 import { useMessage } from '@/hooks/useMessage';
-import { useEffect } from 'react';
+
+import AddUserDialog from '@/components/AddUserDialog';
 
 interface ClientHomeProps {
     userCount: number;
@@ -11,6 +15,7 @@ interface ClientHomeProps {
 
 export default function ClientHome({ userCount, error }: ClientHomeProps) {
     const { showError } = useMessage();
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         if (error) {
@@ -18,8 +23,17 @@ export default function ClientHome({ userCount, error }: ClientHomeProps) {
         }
     }, [error]);
 
+    const onClose = () => {
+        setIsModalOpen(false);
+    };
+
     return (
         <div className="min-h-screen flex flex-col justify-center items-center bg-background text-foreground px-4">
+            
+            {/* Modale */}
+            <AddUserDialog isOpen={isModalOpen} onClose={onClose} />
+            
+            {/* Contenuti Home Page */}
             <div className="w-full max-w-md text-center">
                 <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-center">
                     Benvenuto in Directory Utenti 2.0!
@@ -43,20 +57,20 @@ export default function ClientHome({ userCount, error }: ClientHomeProps) {
                                 Lista utenti
                             </Link>
 
-                            <Link
-                                href="/create-user"
-                                className="btn-secondary w-full sm:w-auto truncate"
+                            <button
+                                className="btn-secondary"
+                                onClick={() => setIsModalOpen(true)}
                             >
-                                Nuovo utente
-                            </Link>
+                                Aggiungi utente
+                            </button>
                         </>
                     ) : (
-                        <Link
-                            href="/create-user"
-                            className="btn-primary w-full sm:w-auto truncate"
-                        >
-                            Nuovo utente
-                        </Link>
+                            <button
+                                className="btn-secondary"
+                                onClick={() => setIsModalOpen(true)}
+                            >
+                                Aggiungi utente
+                            </button>
                     )}
                 </div>
             </div>
