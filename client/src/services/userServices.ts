@@ -62,23 +62,35 @@ export const addUser = async (userData: UserData) => {
   }
 };
 
-
-export const uploadProfileImage = async (file: File) => {
+export const deleteUser = async (userId: string): Promise<void> => {
   try {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append(
-      "upload_preset",
-      process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || ""
+    const response = await axios.delete(`${API_URL}/${userId}`);
+    return response.data;
+  } catch (error: any) {
+    console.log("deleteUser: error", error);
+    throw new Error(
+      error.response?.data?.message || "Errore nella cancellazione utente."
     );
-
-    const response = await axios.post(
-      `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
-      formData
-    );
-
-    return response.data.secure_url;
-  } catch (error) {
-    throw error;
   }
 };
+
+
+// export const uploadProfileImage = async (file: File) => {
+//   try {
+//     const formData = new FormData();
+//     formData.append("file", file);
+//     formData.append(
+//       "upload_preset",
+//       process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || ""
+//     );
+
+//     const response = await axios.post(
+//       `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+//       formData
+//     );
+
+//     return response.data.secure_url;
+//   } catch (error) {
+//     throw error;
+//   }
+// };

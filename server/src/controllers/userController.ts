@@ -128,3 +128,30 @@ export const createUser = async (
     next(err);
   }
 };
+
+export const deleteUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  // Verifica se l'ID fornito è valido
+  if (!isValidObjectId(req.params.id)) {
+    res.status(400).json({ message: "Invalid user ID format" });
+    return;
+  }
+
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+
+    if (!user) {
+      res.status(404).json({ message: "Utente non trovato" });
+      return;
+    }
+
+    res.status(200).json({ message: "Utente cancellato con successo" });
+    return;
+  } catch (err) {
+    next(err);
+    return;
+  }
+};

@@ -6,6 +6,7 @@ import {
   getTotalUsers,
   getUserById,
   createUser,
+  deleteUser
 } from "../controllers/userController";
 
 const router: Router = Router();
@@ -180,6 +181,31 @@ router.get("/:id", getUserById);
  *         description: Email già in uso.
  */
 router.post("/", validateUser, createUser);
+
+/**
+ * @swagger
+ * /users/{id}:
+ *   delete:
+ *     summary: Elimina un utente
+ *     description: Rimuove un utente dal database utilizzando il suo ID univoco.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID univoco dell'utente da eliminare.
+ *     responses:
+ *       200:
+ *         description: Utente eliminato con successo.
+ *       400:
+ *         description: ID utente non valido.
+ *       404:
+ *         description: Utente non trovato.
+ *       500:
+ *         description: Errore interno del server.
+ */
+router.delete("/:id", deleteUser);
 
 
 export default router;

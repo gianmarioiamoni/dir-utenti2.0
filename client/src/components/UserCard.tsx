@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Trash2, Info } from 'lucide-react'; 
+import { Trash2, Info } from 'lucide-react';
+
+import { useDeleteUser } from '@/hooks/useDeleteUser';
+import { useUsers } from '@/hooks/useUsers';
+
+import DeleteUserConfirmDialog from './DeleteUserConfirmDialog';
 
 interface UserCardProps {
     _id: string;
@@ -16,9 +21,32 @@ const UserCard: React.FC<UserCardProps> = ({ _id, nome, cognome, email, onDelete
     const [isHovered, setIsHovered] = useState(false);
     const initials = `${nome.charAt(0)}${cognome.charAt(0)}`.toUpperCase();
 
+    // Delete logic
+    const { mutate } = useUsers(1); // Ottiene la funzione di mutazione
+    const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+
+    const { handleDeleteUser, isDeleting } = useDeleteUser(() => {
+        // Ricarica la lista degli utenti dopo la cancellazione
+        mutate();
+        setIsConfirmDialogOpen(false);
+    });
+
     const handleUserClick = () => {
         router.push(`/user/${_id}`);
     };
+
+    const confirmDelete = () => {
+        setIsConfirmDialogOpen(true);
+    };
+
+    const cancelDelete = () => {
+        setIsConfirmDialogOpen(false);
+    };
+
+    const proceedDelete = () => {
+        handleDeleteUser(_id);
+    };
+
 
     return (
         <div className="bg-gray-dark shadow-md rounded-lg p-4 border border-gray-light hover:shadow-lg transition-all relative">
@@ -58,7 +86,7 @@ const UserCard: React.FC<UserCardProps> = ({ _id, nome, cognome, email, onDelete
             {/* Icona di cancellazione con tooltip */}
             <div
                 className="absolute top-2 right-2 cursor-pointer z-10 group"
-                onClick={onDelete}
+                onClick={confirmDelete}
             >
                 <Trash2
                     className="text-foreground hover:text-accent transition-colors"
@@ -68,6 +96,17 @@ const UserCard: React.FC<UserCardProps> = ({ _id, nome, cognome, email, onDelete
                     Cancella utente
                 </div>
             </div>
+
+            {/* Dialog di conferma cancellazione */}
+            {isConfirmDialogOpen &&
+                <DeleteUserConfirmDialog
+                    cancelDelete={cancelDelete}
+                    proceedDelete={proceedDelete}
+                    isDeleting={isDeleting}
+                    nome={nome}
+                    cognome={cognome}
+                />
+            }
 
         </div>
     );
