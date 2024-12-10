@@ -7,7 +7,7 @@ import { useMessage } from '@/hooks/useMessage';
 
 import UserCard from '@/components/UserCard';
 import Pagination from '@/components/Pagination';
-import AddUserDialog from '@/components/AddUserDialog';
+import AddUserDialog from '@/components/UserDataDialog';
 import Loader from '@/components/Loader';
 
 
@@ -50,7 +50,7 @@ const UsersPage: React.FC = () => {
                         {data?.users.map((user) => (
                             <UserCard
                                 key={user._id}
-                                user={user}  
+                                user={user}
                             />
                         ))}
                     </div>

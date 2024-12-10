@@ -8,7 +8,7 @@ import { useUsers } from '@/hooks/useUsers';
 import { User } from '@/interfaces/userInterfaces';
 
 import DeleteUserConfirmDialog from './DeleteUserConfirmDialog';
-import AddUserDialog from './AddUserDialog';
+import EditUserDialog from './UserDataDialog';
 
 // interface UserCardProps {
 //     _id: string;
@@ -23,13 +23,13 @@ interface UserCardProps {
 
 const UserCard: React.FC<UserCardProps> = ({ user }) => {
     const router = useRouter();
-    
+
     const { _id, nome, cognome, email, dataNascita, fotoProfilo } = user;
     console.log("UserCard - user:", user);
-    
+
     const [isHovered, setIsHovered] = useState(false);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-    
+
     const initials = `${nome.charAt(0)}${cognome.charAt(0)}`.toUpperCase();
 
     // Delete logic
@@ -129,7 +129,7 @@ const UserCard: React.FC<UserCardProps> = ({ user }) => {
 
             {/* Dialogo di modifica */}
             {isEditDialogOpen && (
-                <AddUserDialog
+                <EditUserDialog
                     isOpen={isEditDialogOpen}
                     onClose={closeEditDialog}
                     _id={_id}

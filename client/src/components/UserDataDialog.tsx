@@ -1,18 +1,16 @@
 import React, { FC } from "react";
-// import { useUserForm } from "@/hooks/useUserForm";
-import { useUserForm } from "@/hooks/useEditUser";
+import { useUserData } from "@/hooks/useUserData";
 import Loader from "./Loader";
 import { useMessage } from "@/hooks/useMessage";
-import { UserData } from "@/interfaces/userInterfaces";
 
-interface AddUserDialogProps {
+interface UserDataDialogProps {
     isOpen: boolean;
     onClose: () => void;
     _id?: string;
     mode?: 'create' | 'edit';
 }
 
-const AddUserDialog: FC<AddUserDialogProps> = ({
+const UserDataDialog: FC<UserDataDialogProps> = ({
     isOpen,
     onClose,
     _id = '',
@@ -31,7 +29,7 @@ const AddUserDialog: FC<AddUserDialogProps> = ({
         handleCancel,
         loading,
         validationErrors
-    } = useUserForm({
+    } = useUserData({
         onClose,
         onSuccess: () => showSuccess(successMessage),
         _id,
@@ -162,4 +160,4 @@ const AddUserDialog: FC<AddUserDialogProps> = ({
     );
 };
 
-export default AddUserDialog;
+export default UserDataDialog;

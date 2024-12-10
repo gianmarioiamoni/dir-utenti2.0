@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useUsers } from '@/hooks/useUsers';
 import { useMessage } from '@/hooks/useMessage';
 
-import AddUserDialog from '@/components/AddUserDialog';
+import AddUserDialog from '@/components/UserDataDialog';
 
 interface ClientHomeProps {
     userCount: number;
@@ -26,10 +26,10 @@ export default function ClientHome({ userCount, error }: ClientHomeProps) {
 
     return (
         <div className="min-h-screen flex flex-col justify-center items-center bg-background text-foreground px-4">
-            
+
             {/* Modale */}
             <AddUserDialog isOpen={isModalOpen} onClose={onCloseModal} />
-            
+
             {/* Contenuti Home Page */}
             <div className="w-full max-w-md text-center">
                 <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-center">
@@ -62,12 +62,12 @@ export default function ClientHome({ userCount, error }: ClientHomeProps) {
                             </button>
                         </>
                     ) : (
-                            <button
-                                className="btn-secondary"
-                                onClick={onOpenModal}
-                            >
-                                Aggiungi utente
-                            </button>
+                        <button
+                            className="btn-secondary"
+                            onClick={onOpenModal}
+                        >
+                            Aggiungi utente
+                        </button>
                     )}
                 </div>
             </div>

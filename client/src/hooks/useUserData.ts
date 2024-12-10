@@ -7,7 +7,7 @@ import { uploadFile } from "@/services/uploadServices";
 import { validateUser } from "@/utils/validation";
 import { UserData } from "@/interfaces/userInterfaces";
 
-interface useUserFormProps {
+interface useUserDataProps {
   onClose: () => void;
   onSuccess: () => void;
   _id?: string;
@@ -15,12 +15,12 @@ interface useUserFormProps {
   mode?: "create" | "edit";
 }
 
-export const useUserForm = ({
+export const useUserData = ({
   onClose,
   onSuccess,
   _id = "",
   mode = "create",
-}: useUserFormProps) => {
+}: useUserDataProps) => {
     const [formData, setFormData] = useState<UserData>({
         nome: "",
         cognome: "",
