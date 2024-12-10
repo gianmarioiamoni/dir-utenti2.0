@@ -1,7 +1,9 @@
 import React, { FC } from "react";
+
 import { useUserData } from "@/hooks/useUserData";
-import Loader from "./Loader";
 import { useMessage } from "@/hooks/useMessage";
+
+import Loader from "@/components/Loader";
 
 interface UserDataDialogProps {
     isOpen: boolean;
