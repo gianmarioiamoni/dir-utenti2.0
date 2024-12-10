@@ -129,6 +129,63 @@ export const createUser = async (
   }
 };
 
+export const updateUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  console.log("req.body", req.body);
+  try {
+    // Validation
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      console.error("Errore di validazione:", errors.array());
+      res.status(400).json({ errors: errors.array() });
+      return;
+    }
+
+    const { id } = req.params;
+    const { nome, cognome, email, dataNascita, fotoProfilo } = req.body;
+
+    if (!id) {
+      return next(new CustomError("ID utente mancante", 400));
+    }
+
+    // Trova l'utente da modificare
+    const userToUpdate = await User.findById(id);
+    if (!userToUpdate) {
+      return next(new CustomError("Utente non trovato", 404));
+    }
+
+    // Verifica email se è cambiata
+    if (email !== userToUpdate.email) {
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        throw new CustomError(
+          "Email già in uso. Utilizzare un altro indirizzo email.",
+          409
+        );
+      }
+    }
+
+    // Aggiorna l'utente
+    userToUpdate.nome = nome;
+    userToUpdate.cognome = cognome;
+    userToUpdate.email = email;
+    userToUpdate.dataNascita = dataNascita;
+
+    if (fotoProfilo) {
+      userToUpdate.fotoProfilo = fotoProfilo;
+    }
+
+    await userToUpdate.save();
+
+    res.status(200).json(userToUpdate);
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const deleteUser = async (
   req: Request,
   res: Response,

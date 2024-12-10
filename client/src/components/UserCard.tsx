@@ -1,24 +1,35 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Trash2, Info } from 'lucide-react';
+import { Trash2, Edit } from 'lucide-react';
 
 import { useDeleteUser } from '@/hooks/useDeleteUser';
 import { useUsers } from '@/hooks/useUsers';
 
-import DeleteUserConfirmDialog from './DeleteUserConfirmDialog';
+import { User } from '@/interfaces/userInterfaces';
 
+import DeleteUserConfirmDialog from './DeleteUserConfirmDialog';
+import AddUserDialog from './AddUserDialog';
+
+// interface UserCardProps {
+//     _id: string;
+//     nome: string;
+//     cognome: string;
+//     email: string;
+//     onDelete?: () => void;
+// }
 interface UserCardProps {
-    _id: string;
-    nome: string;
-    cognome: string;
-    email: string;
-    onDelete?: () => void;
+    user: User;
 }
 
-const UserCard: React.FC<UserCardProps> = ({ _id, nome, cognome, email, onDelete }) => {
+const UserCard: React.FC<UserCardProps> = ({ user }) => {
     const router = useRouter();
-
+    
+    const { _id, nome, cognome, email, dataNascita, fotoProfilo } = user;
+    console.log("UserCard - user:", user);
+    
     const [isHovered, setIsHovered] = useState(false);
+    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+    
     const initials = `${nome.charAt(0)}${cognome.charAt(0)}`.toUpperCase();
 
     // Delete logic
@@ -45,6 +56,14 @@ const UserCard: React.FC<UserCardProps> = ({ _id, nome, cognome, email, onDelete
 
     const proceedDelete = () => {
         handleDeleteUser(_id);
+    };
+
+    const openEditDialog = () => {
+        setIsEditDialogOpen(true);
+    };
+
+    const closeEditDialog = () => {
+        setIsEditDialogOpen(false);
     };
 
 
@@ -83,19 +102,40 @@ const UserCard: React.FC<UserCardProps> = ({ _id, nome, cognome, email, onDelete
                 )}
             </div>
 
-            {/* Icona di cancellazione con tooltip */}
-            <div
-                className="absolute top-2 right-2 cursor-pointer z-10 group"
-                onClick={confirmDelete}
-            >
-                <Trash2
-                    className="text-foreground hover:text-accent transition-colors"
-                    size={20}
-                />
-                <div className="absolute hidden group-hover:block bg-background text-foreground text-xs px-2 py-1 rounded -top-8 -left-4 whitespace-nowrap">
-                    Cancella utente
+            {/* Icone di edit e delete */}
+            <div className="absolute top-2 right-2 flex space-x-2 z-10">
+                {/* Icona di edit con tooltip */}
+                <div className="group cursor-pointer" onClick={openEditDialog}>
+                    <Edit
+                        className="text-foreground hover:text-accent transition-colors"
+                        size={20}
+                    />
+                    <div className="absolute hidden group-hover:block bg-background text-foreground text-xs px-2 py-1 rounded -top-8 left-0 whitespace-nowrap">
+                        Modifica utente
+                    </div>
+                </div>
+
+                {/* Icona di cancellazione con tooltip */}
+                <div className="group cursor-pointer" onClick={confirmDelete}>
+                    <Trash2
+                        className="text-foreground hover:text-accent transition-colors"
+                        size={20}
+                    />
+                    <div className="absolute hidden group-hover:block bg-background text-foreground text-xs px-2 py-1 rounded -top-8 -left-4 whitespace-nowrap">
+                        Cancella utente
+                    </div>
                 </div>
             </div>
+
+            {/* Dialogo di modifica */}
+            {isEditDialogOpen && (
+                <AddUserDialog
+                    isOpen={isEditDialogOpen}
+                    onClose={closeEditDialog}
+                    _id={_id}
+                    mode="edit"
+                />
+            )}
 
             {/* Dialog di conferma cancellazione */}
             {isConfirmDialogOpen &&

@@ -6,6 +6,7 @@ import {
   getTotalUsers,
   getUserById,
   createUser,
+  updateUser,
   deleteUser
 } from "../controllers/userController";
 
@@ -181,6 +182,34 @@ router.get("/:id", getUserById);
  *         description: Email già in uso.
  */
 router.post("/", validateUser, createUser);
+
+/**
+ * @swagger
+ * /api/users/{id}:
+ *   put:
+ *     summary: Aggiorna un utente esistente
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/User'
+ *     responses:
+ *       200:
+ *         description: Utente modificato con successo
+ *       400:
+ *         description: Errore di validazione
+ *       409:
+ *         description: Email già in uso
+ */
+router.put("/:id", validateUser, updateUser);
 
 /**
  * @swagger

@@ -62,6 +62,22 @@ export const addUser = async (userData: UserData) => {
   }
 };
 
+export const updateUser = async (userId: string, userData: UserData) => {
+  try {
+    if (!userId) {
+      throw new Error("ID utente mancante");
+    }
+    const response = await axios.put(`${API_URL}/${userId}`, userData);
+    console.log("updateUser: response", response);
+    return response.data;
+  } catch (error: any) {
+    console.log("updateUser: error", error);
+    throw new Error(
+      error.response?.data?.message || "Errore nella modifica utente."
+    );
+  }
+}
+
 export const deleteUser = async (userId: string): Promise<void> => {
   try {
     const response = await axios.delete(`${API_URL}/${userId}`);

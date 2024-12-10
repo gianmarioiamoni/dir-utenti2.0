@@ -35,7 +35,6 @@ export const useUsers = (page: number) => {
     onOpenModal,
     error,
     isError: !!error,
-    // isLoading: !data && !error,
     isLoading,
     isValidating,
     mutate, // Per aggiornare manualmente i dati

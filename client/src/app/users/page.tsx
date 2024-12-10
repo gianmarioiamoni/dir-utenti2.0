@@ -50,10 +50,7 @@ const UsersPage: React.FC = () => {
                         {data?.users.map((user) => (
                             <UserCard
                                 key={user._id}
-                                _id={user._id}
-                                nome={user.nome}
-                                cognome={user.cognome}
-                                email={user.email}
+                                user={user}  
                             />
                         ))}
                     </div>

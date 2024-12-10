@@ -1,10 +1,11 @@
 import React from 'react';
 import Image from 'next/image';
-import { getUserDetails, calculateAge } from '@/services/userServices';
-import { Breadcrumbs, BreadcrumbItem } from "@nextui-org/react";
+
 import { Card, CardBody, CardHeader, Divider } from "@nextui-org/react";
 import { FaUser, FaEnvelope, FaBirthdayCake } from 'react-icons/fa';
+
 import UserBreadcrumbs from '@/components/UserBreadcrumbs';
+import { getUserDetails, calculateAge } from '@/services/userServices';
 
 interface UserDetailsPageProps {
     params: {

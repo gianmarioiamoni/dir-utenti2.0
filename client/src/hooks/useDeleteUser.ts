@@ -15,7 +15,7 @@ export const useDeleteUser = (onSuccessDelete?: () => void) => {
       await deleteUser(userId);
       showSuccess("Utente cancellato con successo");
 
-      // Esegue il callback di successo se fornito
+      // Esegue la callback di successo se fornita
       if (onSuccessDelete) {
         onSuccessDelete();
       }

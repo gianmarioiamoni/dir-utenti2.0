@@ -1,34 +1,57 @@
 import React, { FC } from "react";
-import { useUserForm } from "@/hooks/useUserForm";
+// import { useUserForm } from "@/hooks/useUserForm";
+import { useUserForm } from "@/hooks/useEditUser";
 import Loader from "./Loader";
 import { useMessage } from "@/hooks/useMessage";
+import { UserData } from "@/interfaces/userInterfaces";
 
 interface AddUserDialogProps {
     isOpen: boolean;
     onClose: () => void;
+    _id?: string;
+    mode?: 'create' | 'edit';
 }
 
-
-
-const AddUserDialog: FC<AddUserDialogProps> = ({ isOpen, onClose }) => {
+const AddUserDialog: FC<AddUserDialogProps> = ({
+    isOpen,
+    onClose,
+    _id = '',
+    mode = 'create'
+}) => {
     const { showSuccess } = useMessage();
+    const successMessage = mode === 'create'
+        ? "Utente aggiunto con successo!"
+        : "Utente modificato con successo!";
+
     const {
         formData,
         handleChange,
         handleFileChange,
         handleSubmit,
-        handleCancel, 
+        handleCancel,
         loading,
-        validationErrors } = useUserForm({ onClose, onSuccess: () => showSuccess("Utente aggiunto con successo!") });
+        validationErrors
+    } = useUserForm({
+        onClose,
+        onSuccess: () => showSuccess(successMessage),
+        _id,
+        mode
+    });
     
     if (!isOpen) return null;
 
+    const dialogTitle = mode === 'create'
+        ? "Aggiungi Nuovo Utente"
+        : "Modifica Utente";
+
+    // Bottone di submit dinamico
+    const submitButtonText = mode === 'create' ? "Crea" : "Modifica";
 
     return (
         <div className="fixed inset-0 bg-background bg-opacity-50 flex justify-center items-center z-50">
             <div className="bg-background p-6 rounded-lg shadow-lg max-w-lg w-full relative z-60">
                 
-                <h2 className="text-xl font-semibold mb-4">Aggiungi Nuovo Utente</h2>
+                <h2 className="text-xl font-semibold mb-4">{dialogTitle}</h2>
 
                 {/* Area Errori */}
                 {validationErrors?.serverError && (
@@ -131,7 +154,7 @@ const AddUserDialog: FC<AddUserDialogProps> = ({ isOpen, onClose }) => {
                         Annulla
                     </button>
                     <button className="btn-primary" onClick={handleSubmit}>
-                        Crea
+                        {submitButtonText}
                     </button>
                 </div>
             </div>

@@ -4,7 +4,7 @@ export interface User {
   cognome: string;
   email: string;
   dataNascita: Date;
-  fotoProfilo: string;
+  fotoProfilo?: string;
 }
 
 export interface UsersResponse {
