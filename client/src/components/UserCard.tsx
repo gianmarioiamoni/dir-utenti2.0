@@ -1,70 +1,34 @@
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { FC } from 'react';
 import { Trash2, Edit } from 'lucide-react';
 
-import { useDeleteUser } from '@/hooks/useDeleteUser';
-import { useUsers } from '@/hooks/useUsers';
+import { useUserCard } from '@/hooks/useUserCard';
 
 import { User } from '@/interfaces/userInterfaces';
 
 import DeleteUserConfirmDialog from './DeleteUserConfirmDialog';
 import EditUserDialog from './UserDataDialog';
 
-// interface UserCardProps {
-//     _id: string;
-//     nome: string;
-//     cognome: string;
-//     email: string;
-//     onDelete?: () => void;
-// }
 interface UserCardProps {
     user: User;
 }
 
-const UserCard: React.FC<UserCardProps> = ({ user }) => {
-    const router = useRouter();
+const UserCard: FC<UserCardProps> = ({ user }) => {
 
-    const { _id, nome, cognome, email, dataNascita, fotoProfilo } = user;
-    console.log("UserCard - user:", user);
-
-    const [isHovered, setIsHovered] = useState(false);
-    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-
+    const { _id, nome, cognome, email } = user;
     const initials = `${nome.charAt(0)}${cognome.charAt(0)}`.toUpperCase();
 
-    // Delete logic
-    const { mutate } = useUsers(1); // Ottiene la funzione di mutazione
-    const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
-
-    const { handleDeleteUser, isDeleting } = useDeleteUser(() => {
-        // Ricarica la lista degli utenti dopo la cancellazione
-        mutate();
-        setIsConfirmDialogOpen(false);
-    });
-
-    const handleUserClick = () => {
-        router.push(`/user/${_id}`);
-    };
-
-    const confirmDelete = () => {
-        setIsConfirmDialogOpen(true);
-    };
-
-    const cancelDelete = () => {
-        setIsConfirmDialogOpen(false);
-    };
-
-    const proceedDelete = () => {
-        handleDeleteUser(_id);
-    };
-
-    const openEditDialog = () => {
-        setIsEditDialogOpen(true);
-    };
-
-    const closeEditDialog = () => {
-        setIsEditDialogOpen(false);
-    };
+    const {
+        isHovered,
+        setIsHovered,
+        handleUserClick,
+        isEditDialogOpen,
+        openEditDialog,
+        closeEditDialog,
+        isConfirmDialogOpen,
+        isDeleting,
+        confirmDelete,
+        cancelDelete,
+        proceedDelete } = useUserCard({ _id });
 
 
     return (

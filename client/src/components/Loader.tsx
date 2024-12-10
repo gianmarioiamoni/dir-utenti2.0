@@ -23,6 +23,7 @@ interface LoaderProps {
  * <Loader isLoading={true} />
  */
 const Loader: FC<LoaderProps> = ({ isLoading, msg = "Caricamento Utenti..." }: LoaderProps) => {
+    
     return isLoading ? (
         <div className="flex flex-col items-center justify-center loader-container">
             {/* Animazione caricamento */}

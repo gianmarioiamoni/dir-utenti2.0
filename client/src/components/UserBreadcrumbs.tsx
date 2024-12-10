@@ -2,13 +2,14 @@
 
 import { FC } from "react";
 import { Breadcrumbs, BreadcrumbItem } from "@nextui-org/react";
-import Link from "next/link";
+
 import { User } from "@/interfaces/userInterfaces";
 
 interface UserBreadcrumbsProps {
     userDetails: User;
 }
-const UserBreadcrumbs: FC<UserBreadcrumbsProps> = ({userDetails}) => {
+const UserBreadcrumbs: FC<UserBreadcrumbsProps> = ({ userDetails }) => {
+    
     return (
         <div className="mb-4">
             <Breadcrumbs>
