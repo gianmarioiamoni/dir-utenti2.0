@@ -6,10 +6,11 @@ import { useUsers } from "./useUsers";
 
 
 interface UserCardProps {
-  _id: string;
+    _id: string;
+    page: number;
 }
 
-export const useUserCard = ({ _id }: UserCardProps) => {
+export const useUserCard = ({ _id, page }: UserCardProps) => {
   const router = useRouter();
 
   const [isHovered, setIsHovered] = useState(false);
@@ -18,7 +19,7 @@ export const useUserCard = ({ _id }: UserCardProps) => {
 
 
   // Delete logic
-  const { mutate } = useUsers(1); // Ottiene la funzione di mutazione
+  const { mutate } = useUsers(page); // Ottiene la funzione di mutazione
   const { handleDeleteUser, isDeleting } = useDeleteUser(() => {
     // Ricarica la lista degli utenti dopo la cancellazione
     mutate();

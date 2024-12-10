@@ -2,12 +2,14 @@ import React, { FC } from "react";
 
 import { useUserData } from "@/hooks/useUserData";
 import { useMessage } from "@/hooks/useMessage";
+import { useUsers } from "@/hooks/useUsers";
 
 import Loader from "@/components/Loader";
 
 interface UserDataDialogProps {
     isOpen: boolean;
     onClose: () => void;
+    page?: number;
     _id?: string;
     mode?: 'create' | 'edit';
 }
@@ -15,6 +17,7 @@ interface UserDataDialogProps {
 const UserDataDialog: FC<UserDataDialogProps> = ({
     isOpen,
     onClose,
+    page = 1,
     _id = '',
     mode = 'create'
 }) => {
@@ -22,7 +25,13 @@ const UserDataDialog: FC<UserDataDialogProps> = ({
     const successMessage = mode === 'create'
         ? "Utente aggiunto con successo!"
         : "Utente modificato con successo!";
-
+    
+    const { mutate } = useUsers(page);
+    const onSuccess = () => {
+        showSuccess(successMessage)
+        mutate();
+    };
+    
     const {
         formData,
         handleChange,
@@ -33,7 +42,7 @@ const UserDataDialog: FC<UserDataDialogProps> = ({
         validationErrors
     } = useUserData({
         onClose,
-        onSuccess: () => showSuccess(successMessage),
+        onSuccess,
         _id,
         mode
     });
@@ -48,8 +57,8 @@ const UserDataDialog: FC<UserDataDialogProps> = ({
     const submitButtonText = mode === 'create' ? "Crea" : "Modifica";
 
     return (
-        <div className="fixed inset-0 bg-background bg-opacity-50 flex justify-center items-center z-50">
-            <div className="bg-background p-6 rounded-lg shadow-lg max-w-lg w-full relative z-60">
+        <div className="fixed inset-0 bg-transparent flex justify-center items-center z-50">
+            <div className="bg-background p-6 rounded-lg border-2 border-gray-light shadow-lg max-w-lg w-full relative z-60">
                 
                 <h2 className="text-xl font-semibold mb-4">{dialogTitle}</h2>
 
@@ -120,8 +129,7 @@ const UserDataDialog: FC<UserDataDialogProps> = ({
                 <div className="flex flex-col items-center gap-2">
                     <div className="mb-4">
                         <label
-                            // className="bg-blue-500 text-white p-2 rounded cursor-pointer hover:bg-blue-600"
-                            className="btn-primary cursor-pointer"
+                            className="btn-primary cursor-pointer border-2 border-gray-light"
                         >
                             Carica Foto Profilo
                             <input
@@ -150,10 +158,10 @@ const UserDataDialog: FC<UserDataDialogProps> = ({
 
                 {/* Bottoni di azione */}
                 <div className="flex justify-end space-x-2">
-                    <button className="btn-secondary" onClick={handleCancel}>
+                    <button className="btn-secondary border-2 border-gray-light" onClick={handleCancel}>
                         Annulla
                     </button>
-                    <button className="btn-primary" onClick={handleSubmit}>
+                    <button className="btn-primary border-2 border-gray-light" onClick={handleSubmit}>
                         {submitButtonText}
                     </button>
                 </div>

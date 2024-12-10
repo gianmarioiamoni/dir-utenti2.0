@@ -10,9 +10,10 @@ import EditUserDialog from './UserDataDialog';
 
 interface UserCardProps {
     user: User;
+    page: number;
 }
 
-const UserCard: FC<UserCardProps> = ({ user }) => {
+const UserCard: FC<UserCardProps> = ({ user, page }) => {
 
     const { _id, nome, cognome, email } = user;
     const initials = `${nome.charAt(0)}${cognome.charAt(0)}`.toUpperCase();
@@ -28,7 +29,7 @@ const UserCard: FC<UserCardProps> = ({ user }) => {
         isDeleting,
         confirmDelete,
         cancelDelete,
-        proceedDelete } = useUserCard({ _id });
+        proceedDelete } = useUserCard({ _id, page });
 
 
     return (
@@ -96,6 +97,7 @@ const UserCard: FC<UserCardProps> = ({ user }) => {
                 <EditUserDialog
                     isOpen={isEditDialogOpen}
                     onClose={closeEditDialog}
+                    page={page}
                     _id={_id}
                     mode="edit"
                 />

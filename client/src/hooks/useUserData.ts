@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import useSWR from "swr";
-import dayjs from "dayjs"; 
+import dayjs from "dayjs";
 
 import { addUser, getUserDetails, updateUser } from "@/services/userServices";
 import { uploadFile } from "@/services/uploadServices";
@@ -21,47 +21,52 @@ export const useUserData = ({
   _id = "",
   mode = "create",
 }: useUserDataProps) => {
-    const [formData, setFormData] = useState<UserData>({
-        nome: "",
-        cognome: "",
-        email: "",
-        dataNascita: "",
-        fotoProfilo: "",
+  const [formData, setFormData] = useState<UserData>({
+    nome: "",
+    cognome: "",
+    email: "",
+    dataNascita: "",
+    fotoProfilo: "",
   } as UserData);
 
   const [loading, setLoading] = useState(false);
-  const [validationErrors, setValidationErrors] = useState<Record<string, string> | null>(null);
-    
-    if (mode === "edit" && _id) {
-        const { data: user, error, isLoading, isValidating, mutate } = useSWR(
-          ["user", _id],
-          () => getUserDetails(_id),
-          {
-            keepPreviousData: true, // Non esiste una proprietà esplicita in SWR, ma i dati precedenti vengono mantenuti automaticamente
-            revalidateOnFocus: true, // Default: ricarica i dati quando la finestra torna attiva
-            revalidateIfStale: true, // Default: ricarica i dati se sono considerati stantii
-            dedupingInterval: 5000, // Tempo minimo tra richieste duplicate
-          }
-        );
+  const [validationErrors, setValidationErrors] = useState<Record<
+    string,
+    string
+  > | null>(null);
 
-        useEffect(() => {
-          if (user) {
-            const dataNascita =
-              user.dataNascita !== null && user.dataNascita !== undefined
-                ? typeof user.dataNascita === "string"
-                  ? (user.dataNascita as string).split("T")[0]
-                  : dayjs(user.dataNascita).format("yyyy-MM-dd")
-                : null;
-            setFormData({
-              nome: user.nome,
-              cognome: user.cognome,
-              email: user.email,
-              dataNascita: dataNascita ?? "",
-              fotoProfilo: user.fotoProfilo,
-            });
-          }
-        }, [user]);
-    }
+  if (mode === "edit" && _id) {
+    const {
+      data: user,
+      error,
+      isLoading,
+      isValidating,
+      mutate,
+    } = useSWR(["user", _id], () => getUserDetails(_id), {
+      keepPreviousData: true, // Non esiste una proprietà esplicita in SWR, ma i dati precedenti vengono mantenuti automaticamente
+      revalidateOnFocus: true, // Default: ricarica i dati quando la finestra torna attiva
+      revalidateIfStale: true, // Default: ricarica i dati se sono considerati stantii
+      dedupingInterval: 5000, // Tempo minimo tra richieste duplicate
+    });
+
+    useEffect(() => {
+      if (user) {
+        const dataNascita =
+          user.dataNascita !== null && user.dataNascita !== undefined
+            ? typeof user.dataNascita === "string"
+              ? (user.dataNascita as string).split("T")[0]
+              : dayjs(user.dataNascita).format("yyyy-MM-dd")
+            : null;
+        setFormData({
+          nome: user.nome,
+          cognome: user.cognome,
+          email: user.email,
+          dataNascita: dataNascita ?? "",
+          fotoProfilo: user.fotoProfilo,
+        });
+      }
+    }, [user]);
+  }
 
   const handleFileChange = async (file: File) => {
     try {
@@ -95,7 +100,6 @@ export const useUserData = ({
     return Object.keys(newErrors).length === 0;
   };
 
-  // [Resto dell'hook invariato, con piccole modifiche]
   const handleSubmit = async () => {
     if (!validateForm()) return;
 
@@ -139,5 +143,4 @@ export const useUserData = ({
     loading,
     validationErrors,
   };
-
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { FC, useState } from 'react';
 
 import { useUsers } from '@/hooks/useUsers';
 import { useMessage } from '@/hooks/useMessage';
@@ -11,7 +11,7 @@ import AddUserDialog from '@/components/UserDataDialog';
 import Loader from '@/components/Loader';
 
 
-const UsersPage: React.FC = () => {
+const UsersPage: FC = () => {
 
     const [currentPage, setCurrentPage] = useState(1);
 
@@ -27,7 +27,7 @@ const UsersPage: React.FC = () => {
         <div className="container flex flex-col min-h-screen px-8 py-8 bg-background text-foreground">
 
             {/* Modale */}
-            <AddUserDialog isOpen={isModalOpen} onClose={onCloseModal} />
+            <AddUserDialog isOpen={isModalOpen} onClose={onCloseModal} page={currentPage} />
 
             {/* Mostra il loader o lista utenti */}
             {isLoading ? (
@@ -35,7 +35,8 @@ const UsersPage: React.FC = () => {
                     <Loader isLoading={isLoading} />
                 </div>
             ) : (
-                <>
+                    <>
+                    {/* Titolo e bottone di aggiunta utente */}
                     <div className="flex justify-between items-center mb-6">
                         <h1 className="text-3xl font-bold">Lista Utenti</h1>
                         <button
@@ -44,13 +45,15 @@ const UsersPage: React.FC = () => {
                         >
                             Aggiungi utente
                         </button>
-                    </div>
+                        </div>
+                        
                     {/* Lista utenti */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                         {data?.users.map((user) => (
                             <UserCard
                                 key={user._id}
                                 user={user}
+                                page={currentPage}
                             />
                         ))}
                     </div>
