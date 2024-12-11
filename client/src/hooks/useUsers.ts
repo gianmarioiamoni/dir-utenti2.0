@@ -43,9 +43,11 @@ export const useUsers = (initialPage: number = 1) => {
 
   const onCloseModal = () => {
     setIsModalOpen(false);
+    mutate();
   };
 
   const onOpenModal = () => {
+    console.log("currentPage:", currentPage);
     setIsModalOpen(true);
   };
 
