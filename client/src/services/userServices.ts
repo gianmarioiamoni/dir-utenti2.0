@@ -13,12 +13,17 @@ export const getTotalUsers = async (): Promise<number> => {
   }
 };
 
-export const fetchUsers = async (page: number): Promise<UsersResponse> => {
+// userServices.ts
+export const fetchUsers = async (
+  page: number, 
+  search?: string[]
+): Promise<UsersResponse> => {
   const response = await axios.get(`${API_URL}`, {
     params: {
       page,
       limit: 10,
       fields: "nome,cognome,email",
+      search: search ? search.join(',') : undefined
     },
   });
   return response.data;

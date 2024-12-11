@@ -2,11 +2,42 @@
 
 import { useState } from "react";
 import useSWR from "swr";
+
 import { fetchUsers } from "@/services/userServices";
 
-export const useUsers = (page: number) => {
-  
+export const useUsers = (initialPage: number = 1) => {
+  const [currentPage, setCurrentPage] = useState(initialPage);
+  const [searchTerms, setSearchTerms] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { data, error, isLoading, isValidating, mutate } = useSWR(
+    ["users", currentPage, ...searchTerms],
+    () =>
+      fetchUsers(currentPage, searchTerms.length > 0 ? searchTerms : undefined),
+    {
+      keepPreviousData: true,
+      revalidateOnFocus: true,
+      revalidateIfStale: true,
+      dedupingInterval: 5000,
+    }
+  );
+
+  const addSearchTerm = (term: string) => {
+    if (term.trim() && !searchTerms.includes(term.trim())) {
+      setSearchTerms([...searchTerms, term.trim()]);
+      setCurrentPage(1); 
+    }
+  };
+
+  const removeSearchTerm = (term: string) => {
+    setSearchTerms(searchTerms.filter((t) => t !== term));
+    setCurrentPage(1); 
+  };
+
+  const clearSearch = () => {
+    setSearchTerms([]);
+    setCurrentPage(1);
+  };
 
   const onCloseModal = () => {
     setIsModalOpen(false);
@@ -16,20 +47,14 @@ export const useUsers = (page: number) => {
     setIsModalOpen(true);
   };
 
-  const { data, error, isLoading, isValidating, mutate } = useSWR(
-    ["users", page],
-    () => fetchUsers(page),
-    {
-      keepPreviousData: true, // Non esiste una proprietà esplicita in SWR, ma i dati precedenti vengono mantenuti automaticamente
-      revalidateOnFocus: true, // Default: ricarica i dati quando la finestra torna attiva
-      revalidateIfStale: true, // Default: ricarica i dati se sono considerati stantii
-      dedupingInterval: 5000, // Tempo minimo tra richieste duplicate
-    }
-  );
-
-
   return {
     data,
+    currentPage,
+    setCurrentPage,
+    searchTerms,
+    addSearchTerm,
+    removeSearchTerm,
+    clearSearch,
     isModalOpen,
     onCloseModal,
     onOpenModal,
@@ -37,6 +62,6 @@ export const useUsers = (page: number) => {
     isError: !!error,
     isLoading,
     isValidating,
-    mutate, // Per aggiornare manualmente i dati
+    mutate,
   };
 };

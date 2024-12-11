@@ -1,8 +1,8 @@
 import { useState } from "react";
 
 import { useRouter } from "next/navigation";
-import { useDeleteUser } from "./useDeleteUser";
-import { useUsers } from "./useUsers";
+import { useDeleteUser } from "@/hooks/useDeleteUser";
+import { useUsers } from "@/hooks/useUsers";
 
 
 interface UserCardProps {

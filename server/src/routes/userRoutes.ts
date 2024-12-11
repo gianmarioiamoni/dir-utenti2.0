@@ -17,30 +17,35 @@ const router: Router = Router();
  * @swagger
  * /users:
  *   get:
- *     summary: Ottieni tutti gli utenti
- *     description: Restituisce una lista di tutti gli utenti registrati, con supporto per la paginazione.
+ *     summary: Get all users
+ *     description: Retrieves a list of all registered users with pagination support and search capabilities.
  *     parameters:
  *       - in: query
  *         name: page
  *         schema:
  *           type: integer
  *           default: 1
- *         description: Numero della pagina da visualizzare.
+ *         description: Page number to retrieve.
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
  *           default: 10
- *         description: Numero di utenti da mostrare per pagina.
+ *         description: Number of users to show per page.
  *       - in: query
  *         name: fields
  *         schema:
  *           type: string
- *           default: "nome cognome email"
- *         description: Campi degli utenti da includere nella risposta, separati da spazi.
+ *           default: "name surname email"
+ *         description: User fields to include in the response, separated by spaces.
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search term to filter users by name, surname, or email.
  *     responses:
  *       200:
- *         description: Lista degli utenti con metadati di paginazione.
+ *         description: List of users with pagination metadata.
  *         content:
  *           application/json:
  *             schema:
@@ -53,15 +58,21 @@ const router: Router = Router();
  *                     properties:
  *                       id:
  *                         type: string
- *                       nome:
+ *                       name:
  *                         type: string
- *                       cognome:
+ *                       surname:
  *                         type: string
  *                       email:
  *                         type: string
  *                 total:
  *                   type: integer
- *                   description: Numero totale di utenti disponibili.
+ *                   description: Total number of available users.
+ *                 page:
+ *                   type: integer
+ *                   description: Current page number.
+ *                 totalPages:
+ *                   type: integer
+ *                   description: Total number of pages.
  */
 router.get("/", getUsers);
 

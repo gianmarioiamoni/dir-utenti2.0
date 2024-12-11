@@ -31,7 +31,7 @@ const UserDataDialog: FC<UserDataDialogProps> = ({
         showSuccess(successMessage)
         mutate();
     };
-    
+
     const {
         formData,
         handleChange,

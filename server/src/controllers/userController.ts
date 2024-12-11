@@ -12,9 +12,14 @@ export const getUsers = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { page = 1, limit = 10, fields = "nome cognome email" } = req.query;
+  const {
+    page = 1,
+    limit = 10,
+    fields = "nome cognome email",
+    search,
+  } = req.query;
 
-  // Validazione esplicita dei parametri non validi
+  // Validazione parametri
   if (
     !Number.isInteger(Number(page)) ||
     Number(page) <= 0 ||
@@ -25,11 +30,26 @@ export const getUsers = async (
   }
 
   try {
-    const users = await User.find({}, fields.toString().split(",").join(" "))
+    const query = search
+      ? {
+          $or: search
+            .toString()
+            .split(",")
+            .map((term) => ({
+              $or: [
+                { nome: { $regex: term, $options: "i" } },
+                { cognome: { $regex: term, $options: "i" } },
+                { email: { $regex: term, $options: "i" } },
+              ],
+            })),
+        }
+      : {};
+
+    const users = await User.find(query, fields.toString().split(",").join(" "))
       .skip((Number(page) - 1) * Number(limit))
       .limit(Number(limit));
-    
-    const total = await User.countDocuments();
+
+    const total = await User.countDocuments(query);
 
     res.json({ users, total });
     return;
@@ -38,6 +58,7 @@ export const getUsers = async (
     return;
   }
 };
+
 
 // Get total number of users
 export const getTotalUsers = async (
