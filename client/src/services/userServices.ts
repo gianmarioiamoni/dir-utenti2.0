@@ -16,12 +16,13 @@ export const getTotalUsers = async (): Promise<number> => {
 // userServices.ts
 export const fetchUsers = async (
   page: number, 
+  nUsersPerPage: number,
   search?: string[]
 ): Promise<UsersResponse> => {
   const response = await axios.get(`${API_URL}`, {
     params: {
       page,
-      limit: 10,
+      limit: nUsersPerPage,
       fields: "nome,cognome,email",
       search: search ? search.join(',') : undefined
     },

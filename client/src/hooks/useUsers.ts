@@ -5,6 +5,8 @@ import useSWR from "swr";
 
 import { fetchUsers } from "@/services/userServices";
 
+import { N_USERS_PER_PAGE } from "@/config/paginationConfig";
+
 export const useUsers = (initialPage: number = 1) => {
   const [currentPage, setCurrentPage] = useState(initialPage);
   const [searchTerms, setSearchTerms] = useState<string[]>([]);
@@ -13,7 +15,7 @@ export const useUsers = (initialPage: number = 1) => {
   const { data, error, isLoading, isValidating, mutate } = useSWR(
     ["users", currentPage, ...searchTerms],
     () =>
-      fetchUsers(currentPage, searchTerms.length > 0 ? searchTerms : undefined),
+      fetchUsers(currentPage, N_USERS_PER_PAGE, searchTerms.length > 0 ? searchTerms : undefined),
     {
       keepPreviousData: true,
       revalidateOnFocus: true,

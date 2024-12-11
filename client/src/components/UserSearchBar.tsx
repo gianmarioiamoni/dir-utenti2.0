@@ -27,7 +27,8 @@ const UserSearchBar: React.FC<UserSearchBarProps> = ({
     };
 
     return (
-        <div className="w-full max-w-md mx-auto mb-6">
+        // <div className="w-full max-w-md mx-auto mb-6">
+        <div className="w-full max-w-md mx-6">
             <form onSubmit={handleSubmit} className="relative">
                 <input
                     type="text"

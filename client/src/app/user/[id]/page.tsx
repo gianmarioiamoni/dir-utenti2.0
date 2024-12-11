@@ -7,6 +7,7 @@ import { FaUser, FaEnvelope, FaBirthdayCake } from 'react-icons/fa';
 import UserBreadcrumbs from '@/components/UserBreadcrumbs';
 import { getUserDetails, calculateAge } from '@/services/userServices';
 
+
 interface UserDetailsPageProps {
     params: {
         id: string;

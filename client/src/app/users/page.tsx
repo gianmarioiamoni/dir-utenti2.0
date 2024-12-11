@@ -10,6 +10,8 @@ import Pagination from '@/components/Pagination';
 import AddUserDialog from '@/components/UserDataDialog';
 import Loader from '@/components/Loader';
 
+import { N_USERS_PER_PAGE, N_GROUPS } from '@/config/paginationConfig';
+
 const UsersPage: FC = () => {
     const {
         data,
@@ -27,9 +29,6 @@ const UsersPage: FC = () => {
         onOpenModal
     } = useUsers();
 
-    const N_USERS_PER_PAGE = 10;
-    const N_GROUPS = 5;
-
     const { showError } = useMessage();
 
     if (isError) {
@@ -41,17 +40,20 @@ const UsersPage: FC = () => {
         <div className="container flex flex-col min-h-screen px-8 py-8 bg-background text-foreground">
             <AddUserDialog isOpen={isModalOpen} onClose={onCloseModal} page={currentPage} />
 
-            {/* Barra di ricerca */}
-            <UserSearchBar
-                onSearch={addSearchTerm}
-                searchTerms={searchTerms}
-                onRemoveTerm={removeSearchTerm}
-                onClearSearch={clearSearch}
-            />
+            
 
             {/* Titolo e bottone di aggiunta utente */}
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex justify-between items-center align-center mb-6">
                 <h1 className="text-3xl font-bold">Lista Utenti</h1>
+
+                {/* Barra di ricerca */}
+                <UserSearchBar
+                    onSearch={addSearchTerm}
+                    searchTerms={searchTerms}
+                    onRemoveTerm={removeSearchTerm}
+                    onClearSearch={clearSearch}
+                />
+                
                 <button
                     className="btn-primary"
                     onClick={onOpenModal}
