@@ -27,6 +27,9 @@ const UsersPage: FC = () => {
         onOpenModal
     } = useUsers();
 
+    const N_USERS_PER_PAGE = 10;
+    const N_GROUPS = 5;
+
     const { showError } = useMessage();
 
     if (isError) {
@@ -75,11 +78,13 @@ const UsersPage: FC = () => {
 
                     {data?.total && (
                         <div className="mt-20 flex justify-center">
-                            <Pagination
-                                currentPage={currentPage}
-                                totalPages={Math.ceil(data.total / 10)}
-                                onPageChange={setCurrentPage}
-                            />
+                                <Pagination
+                                    currentPage={currentPage}
+                                    nUsersPerPage={N_USERS_PER_PAGE}
+                                    nGroups={N_GROUPS}
+                                    totalUsers={data.total}
+                                    onPageChange={setCurrentPage}
+                                />
                         </div>
                     )}
                 </>

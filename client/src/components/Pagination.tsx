@@ -2,21 +2,26 @@ import { FC } from 'react';
 
 interface PaginationProps {
     currentPage: number;
-    totalPages: number;
+    totalUsers: number;
+    nUsersPerPage: number;
+    nGroups: number;
     onPageChange: (page: number) => void;
 }
 
 const Pagination: FC<PaginationProps> = ({
     currentPage,
-    totalPages,
+    totalUsers,
+    nUsersPerPage,
+    nGroups,
     onPageChange
 }) => {
-    const currentGroup = Math.ceil(currentPage / 5);
-    const totalGroups = Math.ceil(totalPages / 5);
+    const totalPages = Math.ceil(totalUsers / nUsersPerPage);
+    const currentGroup = Math.ceil(currentPage / nGroups);
+    const totalGroups = Math.ceil(totalPages / nGroups);
 
     const renderPageButtons = () => {
-        const startPage = (currentGroup - 1) * 5 + 1;
-        const endPage = Math.min(startPage + 4, totalPages);
+        const startPage = (currentGroup - 1) * nGroups + 1;
+        const endPage = Math.min(startPage + (nGroups - 1), totalPages);
 
         return Array.from(
             { length: endPage - startPage + 1 },
@@ -52,7 +57,7 @@ const Pagination: FC<PaginationProps> = ({
                 {/* Gruppo precedente */}
                 {currentGroup > 1 && (
                     <button
-                        onClick={() => onPageChange((currentGroup - 2) * 5 + 5)}
+                        onClick={() => onPageChange((currentGroup - 2) * nGroups + nGroups)}
                         className="paging-number-btn-inactive"
                     >
                         {'<'}
@@ -65,7 +70,7 @@ const Pagination: FC<PaginationProps> = ({
                 {/* Gruppo successivo */}
                 {currentGroup < totalGroups && (
                     <button
-                        onClick={() => onPageChange(currentGroup * 5 + 1)}
+                        onClick={() => onPageChange(currentGroup * nGroups + 1)}
                         className="paging-number-btn-inactive"
                     >
                         {'>'}
