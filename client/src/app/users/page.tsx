@@ -1,6 +1,9 @@
 "use client";
 
-import React, { FC } from 'react';
+import { FC } from 'react';
+
+import { Plus as PlusIcon } from 'lucide-react'
+
 import { useUsers } from '@/hooks/useUsers';
 import { useMessage } from '@/hooks/useMessage';
 
@@ -40,9 +43,7 @@ const UsersPage: FC = () => {
         <div className="container flex flex-col min-h-screen px-8 py-8 bg-background text-foreground">
             <AddUserDialog isOpen={isModalOpen} onClose={onCloseModal} page={currentPage} />
 
-            
-
-            {/* Titolo e bottone di aggiunta utente */}
+            {/* Titolo, searchbar e bottone di aggiunta utente */}
             <div className="flex justify-between items-center align-center mb-6">
                 <h1 className="text-3xl font-bold">Lista Utenti</h1>
 
@@ -53,12 +54,18 @@ const UsersPage: FC = () => {
                     onRemoveTerm={removeSearchTerm}
                     onClearSearch={clearSearch}
                 />
-                
+                {/* Bottone di aggiunta utente */}
                 <button
-                    className="btn-primary"
+                    className="btn-primary hidden md:block" // Bottone visibile solo da medium (md) in su
                     onClick={onOpenModal}
                 >
                     Aggiungi utente
+                </button>
+                <button
+                    className="btn-primary md:hidden flex items-center justify-center" // Icona visibile solo fino a medium
+                    onClick={onOpenModal}
+                >
+                    <PlusIcon className="h-5 w-5" /> 
                 </button>
             </div>
 
