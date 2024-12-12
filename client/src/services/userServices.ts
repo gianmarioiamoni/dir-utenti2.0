@@ -4,6 +4,16 @@ import { User, UserData, UsersResponse } from "@/interfaces/userInterfaces";
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/users";
 
+// Genera un ID client univoco per la sessione
+const getClientId = () => {
+  let clientId = sessionStorage.getItem('clientId');
+  if (!clientId) {
+    clientId = `client_${Math.random().toString(36).substring(2)}`;
+    sessionStorage.setItem('clientId', clientId);
+  }
+  return clientId;
+};
+
 export const getTotalUsers = async (): Promise<number> => {
   try {
     const response = await axios.get(`${API_URL}/total`);
@@ -73,46 +83,35 @@ export const updateUser = async (userId: string, userData: UserData) => {
     if (!userId) {
       throw new Error("ID utente mancante");
     }
-    const response = await axios.put(`${API_URL}/${userId}`, userData);
+    console.log("updateUser - userId:", userId);
+    console.log("updateUser - API_URL:", API_URL);
+    console.log("updateUser - full URL:", `${API_URL}/${userId}`);
+    
+    const clientId = getClientId();
+    console.log("updateUser - clientId:", clientId);
+    
+    const response = await axios.put(`${API_URL}/${userId}`, userData, {
+      headers: {
+        'x-client-id': clientId
+      }
+    });
     console.log("updateUser: response", response);
     return response.data;
   } catch (error: any) {
     console.log("updateUser: error", error);
     throw new Error(
-      error.response?.data?.message || "Errore nella modifica utente."
-    );
-  }
-}
-
-export const deleteUser = async (userId: string): Promise<void> => {
-  try {
-    const response = await axios.delete(`${API_URL}/${userId}`);
-    return response.data;
-  } catch (error: any) {
-    console.log("deleteUser: error", error);
-    throw new Error(
-      error.response?.data?.message || "Errore nella cancellazione utente."
+      error.response?.data?.message || "Errore nell'aggiornamento utente."
     );
   }
 };
 
-
-// export const uploadProfileImage = async (file: File) => {
-//   try {
-//     const formData = new FormData();
-//     formData.append("file", file);
-//     formData.append(
-//       "upload_preset",
-//       process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || ""
-//     );
-
-//     const response = await axios.post(
-//       `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
-//       formData
-//     );
-
-//     return response.data.secure_url;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
+export const deleteUser = async (userId: string): Promise<void> => {
+  try {
+    await axios.delete(`${API_URL}/${userId}`);
+  } catch (error: any) {
+    console.error("deleteUser: error", error);
+    throw new Error(
+      error.response?.data?.message || "Errore nell'eliminazione utente."
+    );
+  }
+};

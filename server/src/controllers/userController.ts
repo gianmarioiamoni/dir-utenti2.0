@@ -154,38 +154,54 @@ export const updateUser = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
-  console.log("req.body", req.body);
+): Promise<void> => {
+  console.log("updateUser - req.params:", req.params);
+  console.log("updateUser - req.body:", req.body);
+  console.log("updateUser - req.headers:", req.headers);
+  
   try {
     // Validation
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       console.error("Errore di validazione:", errors.array());
-      res.status(400).json({ errors: errors.array() });
+      next(new CustomError("Validation error", 400));
       return;
     }
 
     const { id } = req.params;
+    console.log("updateUser - id estratto:", id);
+    
     const { nome, cognome, email, dataNascita, fotoProfilo } = req.body;
 
     if (!id) {
-      return next(new CustomError("ID utente mancante", 400));
+      next(new CustomError("ID utente mancante", 400));
+      return;
+    }
+
+    // Verifica che l'ID sia un ObjectId valido
+    if (!isValidObjectId(id)) {
+      next(new CustomError("ID utente non valido", 400));
+      return;
     }
 
     // Trova l'utente da modificare
     const userToUpdate = await User.findById(id);
+    console.log("updateUser - userToUpdate:", userToUpdate);
+    
     if (!userToUpdate) {
-      return next(new CustomError("Utente non trovato", 404));
+      next(new CustomError("Utente non trovato", 404));
+      return;
     }
 
     // Verifica email se è cambiata
     if (email !== userToUpdate.email) {
       const existingUser = await User.findOne({ email });
       if (existingUser) {
-        throw new CustomError(
+        next(new CustomError(
           "Email già in uso. Utilizzare un altro indirizzo email.",
           409
-        );
+        ));
+        return;
       }
     }
 
@@ -200,8 +216,12 @@ export const updateUser = async (
     }
 
     await userToUpdate.save();
-
-    res.status(200).json(userToUpdate);
+    
+    // Invia una risposta di successo
+    res.status(200).json({
+      message: "Utente aggiornato con successo",
+      user: userToUpdate
+    });
   } catch (err) {
     next(err);
   }

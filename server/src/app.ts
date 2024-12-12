@@ -16,11 +16,13 @@ import uploadRoute from "./routes/uploadRoutes";
 const app: Express = express();
 
 // Cors: allow localhost:3000 
-app.use(cors({
-  origin: 'http://localhost:3000', 
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], 
-  allowedHeaders: ['Content-Type', 'Authorization'], 
-}));
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization", "x-client-id"],
+  })
+);
 
 // Middleware for JSON parsing
 app.use(express.json());

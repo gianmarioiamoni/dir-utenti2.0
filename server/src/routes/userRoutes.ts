@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { validateUser } from "../validators/userValidator";
+import { checkUserLock, acquireUserLock, releaseUserLock } from "../middlewares/userLockMiddleware";
 
 import {
   getUsers,
@@ -220,7 +221,13 @@ router.post("/", validateUser, createUser);
  *       409:
  *         description: Email già in uso
  */
-router.put("/:id", validateUser, updateUser);
+router.put("/:id", 
+  validateUser, 
+  checkUserLock,
+  acquireUserLock,
+  updateUser,
+  releaseUserLock
+);
 
 /**
  * @swagger
@@ -245,7 +252,12 @@ router.put("/:id", validateUser, updateUser);
  *       500:
  *         description: Errore interno del server.
  */
-router.delete("/:id", deleteUser);
+router.delete("/:id", 
+  checkUserLock,
+  acquireUserLock,
+  deleteUser,
+  releaseUserLock
+);
 
 
 export default router;
