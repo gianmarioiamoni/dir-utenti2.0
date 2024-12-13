@@ -29,16 +29,19 @@ const UserCard: FC<UserCardProps> = ({ user, page }) => {
         isDeleting,
         confirmDelete,
         cancelDelete,
-        proceedDelete } = useUserCard({ _id, page });
+        proceedDelete 
+    } = useUserCard({ _id, page });
 
 
     return (
-        <div className="bg-gray-dark shadow-md rounded-lg p-4 border border-gray-light hover:shadow-lg transition-all relative">
+        <div 
+            className="bg-gray-dark shadow-md rounded-lg p-4 border border-gray-light hover:shadow-lg transition-all relative"
+        >
 
             {/* Contenuto utente con hover effect */}
             <div
                 className="relative"
-
+                onClick={handleUserClick}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
             >

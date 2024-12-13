@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { validationResult } from "express-validator";
 import { isValidObjectId } from "mongoose";
 
+import { redisService } from '../services/redisService';
+
 import { CustomError } from "../utils/CustomError";
 
 import User from "../models/User";
@@ -251,5 +253,36 @@ export const deleteUser = async (
   } catch (err) {
     next(err);
     return;
+  }
+};
+
+export const checkUserLock = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  const { id } = req.params;
+  const clientId = req.headers['x-client-id'] as string;
+
+  if (!clientId) {
+    res.status(400).json({ message: 'Client ID is required' });
+    return;
+  }
+
+  try {
+    const isLocked = await redisService.checkLock(id);
+    if (isLocked) {
+      res.status(423).json({ message: 'Utente bloccato da un altro client' });
+    } else {
+      // Se non è bloccato, proviamo ad acquisire il lock
+      const lockAcquired = await redisService.acquireLock(id, clientId);
+      if (lockAcquired) {
+        res.status(200).json({ message: 'Lock acquisito con successo' });
+      } else {
+        res.status(423).json({ message: 'Non è stato possibile acquisire il lock' });
+      }
+    }
+  } catch (error) {
+    next(error);
   }
 };

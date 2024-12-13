@@ -1,9 +1,9 @@
 import { useState } from "react";
-
 import { useRouter } from "next/navigation";
 import { useDeleteUser } from "@/hooks/useDeleteUser";
 import { useUsers } from "@/hooks/useUsers";
-
+import { checkUserLock, releaseLock } from "@/services/userServices";
+import { useMessage } from "@/hooks/useMessage";
 
 interface UserCardProps {
     _id: string;
@@ -12,26 +12,30 @@ interface UserCardProps {
 
 export const useUserCard = ({ _id, page }: UserCardProps) => {
   const router = useRouter();
+  const { showError } = useMessage();
 
   const [isHovered, setIsHovered] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
 
-
   // Delete logic
-  const { mutate } = useUsers(page); // Ottiene la funzione di mutazione
+  const { mutate } = useUsers(page);
   const { handleDeleteUser, isDeleting } = useDeleteUser(() => {
-    // Ricarica la lista degli utenti dopo la cancellazione
     mutate();
     setIsConfirmDialogOpen(false);
   });
-  //
+
   const handleUserClick = () => {
     router.push(`/user/${_id}`);
   };
 
-  const confirmDelete = () => {
-    setIsConfirmDialogOpen(true);
+  const confirmDelete = async () => {
+    try {
+      await checkUserLock(_id);
+      setIsConfirmDialogOpen(true);
+    } catch (error) {
+      showError((error as Error).message);
+    }
   };
 
   const cancelDelete = () => {
@@ -42,29 +46,46 @@ export const useUserCard = ({ _id, page }: UserCardProps) => {
     handleDeleteUser(_id);
   };
 
-  const openEditDialog = () => {
-    setIsEditDialogOpen(true);
+  const openEditDialog = async () => {
+    try {
+      await checkUserLock(_id);
+      setIsEditDialogOpen(true);
+    } catch (error) {
+      showError((error as Error).message);
+    }
   };
 
-  const closeEditDialog = () => {
-    setIsEditDialogOpen(false);
+  const closeEditDialog = async () => {
+    try {
+      await releaseLock(_id);
+    } catch (error) {
+      console.error('Error releasing lock:', error);
+    } finally {
+      setIsEditDialogOpen(false);
+    }
+  };
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
   };
 
   return {
-    // Funzioni per la gestione della card utente
     isHovered,
     setIsHovered,
     isEditDialogOpen,
-    setIsEditDialogOpen,
     isConfirmDialogOpen,
-    setIsConfirmDialogOpen,
-    handleUserClick,
     isDeleting,
-    handleDeleteUser,
+    handleUserClick,
     confirmDelete,
     cancelDelete,
     proceedDelete,
     openEditDialog,
     closeEditDialog,
+    handleMouseEnter,
+    handleMouseLeave,
   };
 };

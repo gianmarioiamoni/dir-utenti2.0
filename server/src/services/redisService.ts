@@ -78,13 +78,29 @@ class RedisService {
      * @param userId ID dell'utente
      * @returns ID del client che ha il blocco, o null se l'utente non è bloccato
      */
-    public async checkLock(userId: string): Promise<string | null> {
+    public async checkLockHolder(userId: string): Promise<string | null> {
         const lockKey = this.getLockKey(userId);
         try {
             return await this.client.get(lockKey);
         } catch (error) {
             logger.error('Error checking lock:', error);
             return null;
+        }
+    }
+
+    /**
+     * Verifica se esiste un blocco per l'utente
+     * @param userId ID dell'utente da verificare
+     * @returns true se l'utente è bloccato, false altrimenti
+     */
+    public async checkLock(userId: string): Promise<boolean> {
+        const lockKey = this.getLockKey(userId);
+        try {
+            const result = await this.client.get(lockKey);
+            return result !== null;
+        } catch (error) {
+            logger.error('Error checking lock:', error);
+            return false;
         }
     }
 }

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { validateUser } from "../validators/userValidator";
-import { checkUserLock, acquireUserLock, releaseUserLock } from "../middlewares/userLockMiddleware";
+import { checkUserLock, acquireUserLock, releaseUserLock, verifyLockOwnership } from "../middlewares/userLockMiddleware";
 
 import {
   getUsers,
@@ -197,67 +197,196 @@ router.post("/", validateUser, createUser);
 
 /**
  * @swagger
- * /api/users/{id}:
+ * /users/{id}:
  *   put:
- *     summary: Aggiorna un utente esistente
- *     tags: [Users]
+ *     summary: Aggiorna un utente
+ *     description: Aggiorna i dati di un utente esistente. Richiede il lock sull'utente.
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
+ *         description: ID dell'utente da aggiornare
+ *       - in: header
+ *         name: x-client-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del client che richiede la modifica
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/User'
+ *             type: object
+ *             properties:
+ *               nome:
+ *                 type: string
+ *               cognome:
+ *                 type: string
+ *               email:
+ *                 type: string
  *     responses:
  *       200:
- *         description: Utente modificato con successo
+ *         description: Utente aggiornato con successo
  *       400:
- *         description: Errore di validazione
- *       409:
- *         description: Email già in uso
+ *         description: Dati non validi
+ *       423:
+ *         description: Non hai il lock per questo utente
+ *       404:
+ *         description: Utente non trovato
  */
-router.put("/:id", 
-  validateUser, 
-  checkUserLock,
-  acquireUserLock,
-  updateUser,
-  releaseUserLock
-);
+router.put("/:id", validateUser, verifyLockOwnership, updateUser);
 
 /**
  * @swagger
  * /users/{id}:
  *   delete:
  *     summary: Elimina un utente
- *     description: Rimuove un utente dal database utilizzando il suo ID univoco.
+ *     description: Elimina un utente esistente. Richiede il lock sull'utente.
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *         description: ID univoco dell'utente da eliminare.
+ *         description: ID dell'utente da eliminare
+ *       - in: header
+ *         name: x-client-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del client che richiede l'eliminazione
  *     responses:
  *       200:
- *         description: Utente eliminato con successo.
+ *         description: Utente eliminato con successo
+ *       423:
+ *         description: Non hai il lock per questo utente
+ *       404:
+ *         description: Utente non trovato
+ */
+router.delete("/:id", verifyLockOwnership, deleteUser);
+
+/**
+ * @swagger
+ * /users/lock/{id}:
+ *   get:
+ *     summary: Verifica e acquisisce il lock per un utente
+ *     description: Controlla se un utente è bloccato e, se non lo è, tenta di acquisire il lock
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID dell'utente
+ *       - in: header
+ *         name: x-client-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del client che richiede il lock
+ *     responses:
+ *       200:
+ *         description: Lock acquisito con successo
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Lock acquisito con successo
+ *       423:
+ *         description: Utente bloccato da un altro client
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Utente bloccato da un altro client
  *       400:
- *         description: ID utente non valido.
+ *         description: Client ID mancante
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Client ID is required
+ */
+router.get('/lock/:id', checkUserLock);
+
+/**
+ * @swagger
+ * /users/lock/{id}:
+ *   delete:
+ *     summary: Rilascia il lock per un utente
+ *     description: Rilascia il lock precedentemente acquisito per un utente
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID dell'utente
+ *       - in: header
+ *         name: x-client-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del client che rilascia il lock
+ *     responses:
+ *       200:
+ *         description: Lock rilasciato con successo
+ *       400:
+ *         description: Client ID mancante
+ *       404:
+ *         description: Lock non trovato
+ */
+router.delete('/lock/:id', releaseUserLock, (req, res) => {
+  res.status(200).json({ message: 'Lock rilasciato con successo' });
+});
+
+/**
+ * @swagger
+ * /users/{id}:
+ *   get:
+ *     summary: Ottieni un utente per ID
+ *     description: Restituisce i dettagli di un singolo utente specificato dall'ID. L'ID deve essere un ObjectId valido.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID univoco dell'utente.
+ *     responses:
+ *       200:
+ *         description: Dettagli dell'utente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 nome:
+ *                   type: string
+ *                 cognome:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *       400:
+ *         description: Formato dell'ID non valido.
  *       404:
  *         description: Utente non trovato.
- *       500:
- *         description: Errore interno del server.
  */
-router.delete("/:id", 
-  checkUserLock,
-  acquireUserLock,
-  deleteUser,
-  releaseUserLock
-);
+router.get("/:id", getUserById);
 
 
 export default router;

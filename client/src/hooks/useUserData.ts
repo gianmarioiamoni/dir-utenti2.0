@@ -6,6 +6,7 @@ import { addUser, getUserDetails, updateUser } from "@/services/userServices";
 import { uploadFile } from "@/services/uploadServices";
 import { validateUser } from "@/utils/validation";
 import { UserData } from "@/interfaces/userInterfaces";
+import { useMessage } from "@/hooks/useMessage";
 
 interface useUserDataProps {
   onClose: () => void;
@@ -21,6 +22,8 @@ export const useUserData = ({
   _id = "",
   mode = "create",
 }: useUserDataProps) => {
+  const { showError } = useMessage();
+
   const [formData, setFormData] = useState<UserData>({
     nome: "",
     cognome: "",
@@ -117,8 +120,13 @@ export const useUserData = ({
         onSuccess();
       }
       handleCancel();
-    } catch (err: unknown) {
-      // Gestione errori invariata
+    } catch (err: any) {
+      console.error("Error:", err);
+      if (err.response?.status === 423) {
+        showError(err.response.data.message || "L'utente è bloccato da un altro client");
+      } else {
+        showError(err.message || "Si è verificato un errore");
+      }
     }
   };
 
