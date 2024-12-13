@@ -3,7 +3,7 @@ import { validationResult } from "express-validator";
 import { isValidObjectId } from "mongoose";
 
 import { redisService } from "../services/redisService";
-import { io } from "../services/socketService";
+import { io, broadcastToOthers } from "../services/socketService";
 
 import { CustomError } from "../utils/CustomError";
 
@@ -128,16 +128,19 @@ export const createUser = async (
 
     await newUser.save();
     // Notifica tutti i client della creazione tranne quello che ha creato l'utente
-    io.emit("userCreated", {
-      message: `Nuovo utente creato: ${newUser.nome} ${newUser.cognome}`,
-      user: {
-        nome: newUser.nome,
-        cognome: newUser.cognome,
-        email: newUser.email,
-        dataNascita: newUser.dataNascita.toISOString().split("T")[0],
-        fotoProfilo: newUser.fotoProfilo,
-      },
-    });
+    const clientId = req.headers["x-client-id"] as string;
+    if (clientId) {
+      broadcastToOthers(clientId, "userCreated", {
+        message: `Nuovo utente creato: ${newUser.nome} ${newUser.cognome}`,
+        user: {
+          nome: newUser.nome,
+          cognome: newUser.cognome,
+          email: newUser.email,
+          dataNascita: newUser.dataNascita.toISOString().split("T")[0],
+          fotoProfilo: newUser.fotoProfilo,
+        },
+      });
+    }
     res.status(201).json(newUser);
   } catch (err) {
     next(err);
@@ -247,16 +250,19 @@ export const deleteUser = async (
     await redisService.removeLock(id);
 
     // Notifica tutti i client della cancellazione tranne quello che ha cancellato l'utente
-    io.emit("userDeleted", {
-      message: `Utente eliminato: ${user.nome} ${user.cognome}`,
-      user: {
-        nome: user.nome,
-        cognome: user.cognome,
-        email: user.email,
-        dataNascita: user.dataNascita.toISOString().split("T")[0],
-        fotoProfilo: user.fotoProfilo,
-      },
-    });
+    const clientId = req.headers["x-client-id"] as string;
+    if (clientId) {
+      broadcastToOthers(clientId, "userDeleted", {
+        message: `Utente eliminato: ${user.nome} ${user.cognome}`,
+        user: {
+          nome: user.nome,
+          cognome: user.cognome,
+          email: user.email,
+          dataNascita: user.dataNascita.toISOString().split("T")[0],
+          fotoProfilo: user.fotoProfilo,
+        },
+      });
+    }
     
     res.status(200).json({ message: "Utente eliminato con successo" });
   } catch (err) {

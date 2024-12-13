@@ -3,6 +3,7 @@ import { Server as SocketIOServer, Socket } from "socket.io";
 import { UserData, IUser } from "../interfaces/userInterfaces";
 
 export let io: SocketIOServer;
+const connectedSockets = new Map<string, Socket>();
 
 export const initializeSocket = (server: HttpServer) => {
   io = new SocketIOServer(server, {
@@ -14,18 +15,20 @@ export const initializeSocket = (server: HttpServer) => {
 
   io.on("connection", (socket: Socket) => {
     console.log("Client connected:", socket.id);
-
-    socket.on("userCreated", (data) => {
-      // Broadcast to all clients except the sender
-      socket.broadcast.emit("userCreated", data);
-    });
-
-    socket.on("userDeleted", (data) => {
-      // Broadcast to all clients except the sender
-      socket.broadcast.emit("userDeleted", data);
+    
+    socket.on("register", (clientId: string) => {
+      console.log("Client registered:", clientId);
+      connectedSockets.set(clientId, socket);
     });
 
     socket.on("disconnect", () => {
+      // Rimuovi il socket dalla mappa quando il client si disconnette
+      for (const [clientId, s] of connectedSockets.entries()) {
+        if (s.id === socket.id) {
+          connectedSockets.delete(clientId);
+          break;
+        }
+      }
       console.log("Client disconnected:", socket.id);
     });
   });
@@ -33,28 +36,16 @@ export const initializeSocket = (server: HttpServer) => {
   return io;
 };
 
-const convertToUserData = (user: IUser): UserData => ({
-  nome: user.nome,
-  cognome: user.cognome,
-  email: user.email,
-  dataNascita: user.dataNascita.toISOString().split("T")[0],
-  fotoProfilo: user.fotoProfilo,
-});
-
-export const notifyUserCreated = (user: IUser) => {
-  if (!io) return;
-  const userData = convertToUserData(user);
-  io.emit("userCreated", {
-    message: `Nuovo utente creato: ${userData.nome} ${userData.cognome}`,
-    user: userData,
-  });
-};
-
-export const notifyUserDeleted = (user: IUser) => {
-  if (!io) return;
-  const userData = convertToUserData(user);
-  io.emit("userDeleted", {
-    message: `Utente eliminato: ${userData.nome} ${userData.cognome}`,
-    user: userData,
-  });
+export const broadcastToOthers = (
+  excludeClientId: string,
+  event: string,
+  data: any
+) => {
+  const senderSocket = connectedSockets.get(excludeClientId);
+  if (senderSocket) {
+    senderSocket.broadcast.emit(event, data);
+  } else {
+    // Se non troviamo il socket del sender, usiamo broadcast su tutti i socket
+    io.sockets.emit(event, data);
+  }
 };

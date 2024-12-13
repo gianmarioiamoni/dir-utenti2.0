@@ -69,7 +69,12 @@ export const calculateAge = (birthDate: Date): number => {
 
 export const addUser = async (userData: UserData) => {
   try {
-    const response = await axios.post(`${API_URL}`, userData);
+    const clientId = getClientId();
+    const response = await axios.post(`${API_URL}`, userData, {
+      headers: {
+        'x-client-id': clientId
+      }
+    });
     console.log("addUser: response", response);
     return response.data;
   } catch (error: any) {
@@ -115,10 +120,7 @@ export const deleteUser = async (userId: string): Promise<void> => {
       }
     });
   } catch (error: any) {
-    console.error("deleteUser: error", error);
-    throw new Error(
-      error.response?.data?.message || "Errore nell'eliminazione utente."
-    );
+    throw new Error(error.response?.data?.message || "Errore nell'eliminazione dell'utente");
   }
 };
 
