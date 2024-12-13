@@ -1,6 +1,7 @@
 # Dir-Utenti 2.0
 
-A full-stack application for managing a user directory with real-time updates, optimized for responsiveness and user experience. 🎯
+🎯 A full-stack application for managing a user directory with real-time updates, optimized for responsiveness and user experience. 
+
 
 ## 🚀 Key Features
 
@@ -26,22 +27,22 @@ A full-stack application for managing a user directory with real-time updates, o
 ## 🛠️ Technologies
 
 ### Frontend
-- **Framework:** Next.js 14 with TypeScript
-- **State Management:** SWR
-- **Styling:** Tailwind CSS, NextUI
-- **Real-time:** Socket.IO client
-- **Notifications:** React Toastify
-- **Date Handling:** Day.js
+- **Framework**: ${\color{lightgreen}Next.js \space 14}$ with ${\color{lightgreen}TypeScript}$
+- **State Management:** ${\color{lightblue}SWR}$
+- **Styling:** ${\color{lightgray}Tailwind \space CSS}$, ${\color{lightgray}NextUI}$
+- **Real-time:** ${\color{pink}Socket.IO \space client}$
+- **Notifications:** ${\color{lightblue}React \space Toastify}$
+- **Date Handling:** ${\color{lightblue}Day.js}$
 
 ### Backend
-- **Runtime:** Node.js with Express
-- **Language:** TypeScript
-- **Database:** MongoDB with Mongoose
-- **Caching:** Redis for locks
-- **Real-time:** Socket.IO server
-- **Validation:** Express-validator
-- **API Documentation:** Swagger
-- **File Upload:** Cloudinary
+- **Runtime:** ${\color{orange}Node.js}$, ${\color{orange}Express.js}$
+- **Language:** ${\color{lightgreen}TypeScript}$
+- **Database:** ${\color{red}MongoDB}$ with ${\color{red}Mongoose}$
+- **Caching:** ${\color{lightblue}Redis}$ for locks
+- **Real-time:** ${\color{pink}Socket.IO \space server}$
+- **Validation:** ${\color{lightblue}Express-validator}$
+- **API Documentation:** ${\color{lightblue}Swagger}$
+- **File Upload:** ${\color{lightblue}Cloudinary}$
 
 ## 📡 API Documentation
 
@@ -69,7 +70,7 @@ DELETE /api/users/:id
 - Requires user lock
 
 GET /api/users/lock/:id
-- Acquires lock for user editing
+- Acquires user lock
 
 DELETE /api/users/lock/:id
 - Releases user lock
