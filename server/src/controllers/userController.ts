@@ -2,7 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { validationResult } from "express-validator";
 import { isValidObjectId } from "mongoose";
 
-import { redisService } from '../services/redisService';
+import { redisService } from "../services/redisService";
+import { io } from "../services/socketService";
 
 import { CustomError } from "../utils/CustomError";
 
@@ -61,7 +62,6 @@ export const getUsers = async (
   }
 };
 
-
 // Get total number of users
 export const getTotalUsers = async (
   req: Request,
@@ -70,7 +70,7 @@ export const getTotalUsers = async (
 ) => {
   try {
     const total = await User.countDocuments();
-    res.json( total );
+    res.json(total);
     return;
   } catch (err) {
     next(err);
@@ -89,7 +89,7 @@ export const getUserById = async (
     res.status(400).json({ message: "Invalid user ID format" });
     return;
   }
-  
+
   try {
     const user = await User.findById(req.params.id);
     if (!user) {
@@ -108,33 +108,15 @@ export const createUser = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
-  console.log("req.body", req.body);
+): Promise<void> => {
   try {
-    // Validation
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      console.error("Errore di validazione:", errors.array());
       res.status(400).json({ errors: errors.array() });
       return;
     }
 
-    if (!req.body || Object.keys(req.body).length === 0) {
-      return next(
-        new CustomError("Nessun valore fornito nel body della richiesta.", 400)
-      );
-    }
-
-
     const { nome, cognome, email, dataNascita, fotoProfilo } = req.body;
-
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      throw new CustomError(
-        "Email già in uso. Utilizzare un altro indirizzo email.",
-        409
-      );
-    }
 
     const newUser = new User({
       nome,
@@ -145,7 +127,17 @@ export const createUser = async (
     });
 
     await newUser.save();
-
+    // Notifica tutti i client della creazione tranne quello che ha creato l'utente
+    io.emit("userCreated", {
+      message: `Nuovo utente creato: ${newUser.nome} ${newUser.cognome}`,
+      user: {
+        nome: newUser.nome,
+        cognome: newUser.cognome,
+        email: newUser.email,
+        dataNascita: newUser.dataNascita.toISOString().split("T")[0],
+        fotoProfilo: newUser.fotoProfilo,
+      },
+    });
     res.status(201).json(newUser);
   } catch (err) {
     next(err);
@@ -160,7 +152,7 @@ export const updateUser = async (
   console.log("updateUser - req.params:", req.params);
   console.log("updateUser - req.body:", req.body);
   console.log("updateUser - req.headers:", req.headers);
-  
+
   try {
     // Validation
     const errors = validationResult(req);
@@ -172,7 +164,7 @@ export const updateUser = async (
 
     const { id } = req.params;
     console.log("updateUser - id estratto:", id);
-    
+
     const { nome, cognome, email, dataNascita, fotoProfilo } = req.body;
 
     if (!id) {
@@ -189,7 +181,7 @@ export const updateUser = async (
     // Trova l'utente da modificare
     const userToUpdate = await User.findById(id);
     console.log("updateUser - userToUpdate:", userToUpdate);
-    
+
     if (!userToUpdate) {
       next(new CustomError("Utente non trovato", 404));
       return;
@@ -199,10 +191,12 @@ export const updateUser = async (
     if (email !== userToUpdate.email) {
       const existingUser = await User.findOne({ email });
       if (existingUser) {
-        next(new CustomError(
-          "Email già in uso. Utilizzare un altro indirizzo email.",
-          409
-        ));
+        next(
+          new CustomError(
+            "Email già in uso. Utilizzare un altro indirizzo email.",
+            409
+          )
+        );
         return;
       }
     }
@@ -218,11 +212,11 @@ export const updateUser = async (
     }
 
     await userToUpdate.save();
-    
+
     // Invia una risposta di successo
     res.status(200).json({
       message: "Utente aggiornato con successo",
-      user: userToUpdate
+      user: userToUpdate,
     });
   } catch (err) {
     next(err);
@@ -233,26 +227,40 @@ export const deleteUser = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
-  // Verifica se l'ID fornito è valido
-  if (!isValidObjectId(req.params.id)) {
-    res.status(400).json({ message: "Invalid user ID format" });
-    return;
-  }
-
+): Promise<void> => {
   try {
-    const user = await User.findByIdAndDelete(req.params.id);
+    const { id } = req.params;
 
+    if (!isValidObjectId(id)) {
+      res.status(400).json({ message: "ID utente non valido" });
+      return;
+    }
+
+    const user = await User.findById(id);
     if (!user) {
       res.status(404).json({ message: "Utente non trovato" });
       return;
     }
 
-    res.status(200).json({ message: "Utente cancellato con successo" });
-    return;
+    await User.findByIdAndDelete(id);
+    // Rimuovi il lock se presente
+    await redisService.removeLock(id);
+
+    // Notifica tutti i client della cancellazione tranne quello che ha cancellato l'utente
+    io.emit("userDeleted", {
+      message: `Utente eliminato: ${user.nome} ${user.cognome}`,
+      user: {
+        nome: user.nome,
+        cognome: user.cognome,
+        email: user.email,
+        dataNascita: user.dataNascita.toISOString().split("T")[0],
+        fotoProfilo: user.fotoProfilo,
+      },
+    });
+    
+    res.status(200).json({ message: "Utente eliminato con successo" });
   } catch (err) {
     next(err);
-    return;
   }
 };
 
@@ -262,24 +270,26 @@ export const checkUserLock = async (
   next: NextFunction
 ): Promise<void> => {
   const { id } = req.params;
-  const clientId = req.headers['x-client-id'] as string;
+  const clientId = req.headers["x-client-id"] as string;
 
   if (!clientId) {
-    res.status(400).json({ message: 'Client ID is required' });
+    res.status(400).json({ message: "Client ID is required" });
     return;
   }
 
   try {
     const isLocked = await redisService.checkLock(id);
     if (isLocked) {
-      res.status(423).json({ message: 'Utente bloccato da un altro client' });
+      res.status(423).json({ message: "Utente bloccato da un altro client" });
     } else {
       // Se non è bloccato, proviamo ad acquisire il lock
       const lockAcquired = await redisService.acquireLock(id, clientId);
       if (lockAcquired) {
-        res.status(200).json({ message: 'Lock acquisito con successo' });
+        res.status(200).json({ message: "Lock acquisito con successo" });
       } else {
-        res.status(423).json({ message: 'Non è stato possibile acquisire il lock' });
+        res
+          .status(423)
+          .json({ message: "Non è stato possibile acquisire il lock" });
       }
     }
   } catch (error) {

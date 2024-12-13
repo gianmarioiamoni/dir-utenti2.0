@@ -103,6 +103,15 @@ class RedisService {
             return false;
         }
     }
+
+    public async removeLock(userId: string): Promise<void> {
+        const lockKey = `user:${userId}:lock`;
+        try {
+            await this.client.del(lockKey);
+        } catch (error) {
+            logger.error('Error removing lock:', error);
+        }
+    }
 }
 
 export const redisService = RedisService.getInstance();

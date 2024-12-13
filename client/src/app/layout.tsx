@@ -1,33 +1,38 @@
 // /app/layout.tsx
-"use client";
+'use client';
 
-import "./globals.css";
-import { ReactNode } from "react";
+import { useEffect } from 'react';
+import { ToastProvider } from '@/components/wrappers/ToastWrapper';
+import SocketService from '@/services/socketService';
+import { Providers } from './providers';
+import './globals.css';
 
-import { ToastProvider } from "@/components/wrappers/ToastWrapper"
-import "react-toastify/dist/ReactToastify.css";
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  useEffect(() => {
+    // Inizializza Socket.IO
+    const socketService = SocketService.getInstance();
 
-import { Providers } from './providers'
-
-export default function RootLayout({ children }: { children: ReactNode }) {
-  // const [queryClient] = useState(() => new QueryClient());
+    // Cleanup alla disconnessione
+    return () => {
+      socketService.disconnect();
+    };
+  }, []);
 
   return (
     <html lang="en">
       <body>
         <Providers>
           {children}
-          <ToastProvider
-            position="top-right" // Posizione del toast
-            autoClose={2000}     // Tempo di auto-chiusura in millisecondi
+          <ToastProvider 
+            position="top-right"
             hideProgressBar={false}
-            newestOnTop={false}
             closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="colored" // Può essere "light", "dark" o "colored"
+            autoClose={3000}
+            theme="colored"
           />
         </Providers>
       </body>

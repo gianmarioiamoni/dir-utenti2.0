@@ -27,23 +27,20 @@ app.use(
 // Middleware for JSON parsing
 app.use(express.json());
 
+// Mount routes
+app.use('/api/users', userRoutes);
+app.use('/api/upload', uploadRoute);
+
+// Swagger documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
 const MONGODB_URI =
   process.env.MONGODB_URI || "mongodb://localhost:27017/dir-utenti";
 
-// Rotte per Swagger UI
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 app.get("/swagger.json", (req, res) => {
   res.setHeader("Content-Type", "application/json");
   res.send(swaggerDocs);
 });
-
-// Routes
-app.use("/api/users", userRoutes);
-app.use("/api/upload", uploadRoute);
-
-// Swagger
-// setupSwagger(app);
-
 
 // Middleware for errors handling
 app.use(errorHandler); 

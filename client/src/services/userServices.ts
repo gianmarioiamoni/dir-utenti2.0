@@ -1,8 +1,8 @@
 import axios from "axios";
 import { User, UserData, UsersResponse } from "@/interfaces/userInterfaces";
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/users";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const API_URL = `${BASE_URL}/api/users`;
 
 // Genera un ID client univoco per la sessione
 export const getClientId = () => {

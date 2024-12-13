@@ -1,10 +1,24 @@
 "use client"
 
-import { ToastContainer, ToastContainerProps } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, ToastContainerProps } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-interface CustomToastProviderProps extends ToastContainerProps { }
+export const ToastProvider = (props: ToastContainerProps) => {
+  const defaultProps: ToastContainerProps = {
+    position: "top-right",
+    autoClose: 3000,
+    hideProgressBar: false,
+    newestOnTop: false,
+    closeOnClick: true,
+    rtl: false,
+    pauseOnFocusLoss: true,
+    draggable: true,
+    pauseOnHover: true,
+    theme: "colored",
+  };
 
-export function ToastProvider(props: CustomToastProviderProps) {
-    return <ToastContainer {...props} />;
-}
+  // Merge delle props passate con quelle di default
+  const mergedProps = { ...defaultProps, ...props };
+
+  return <ToastContainer {...mergedProps} />;
+};
