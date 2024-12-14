@@ -10,10 +10,14 @@ interface PageProps {
 
 export default async function Page({ params }: PageProps) {
     const { id } = await params;
-    const user = await getUserDetails(id);
+    const userData = await getUserDetails(id);
+    
+    // Assicuriamoci che dataNascita sia una data valida
     const userDetails = {
-        ...user,
-        dataNascita: user.dataNascita.toISOString()
+        ...userData,
+        dataNascita: typeof userData.dataNascita === 'string' 
+            ? userData.dataNascita 
+            : new Date(userData.dataNascita).toISOString()
     };
 
     return (

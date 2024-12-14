@@ -6,10 +6,10 @@ const API_URL = `${BASE_URL}/api/users`;
 
 // Genera un ID client univoco per la sessione
 export const getClientId = () => {
-  let clientId = sessionStorage.getItem('clientId');
+  let clientId = sessionStorage.getItem("clientId");
   if (!clientId) {
     clientId = `client_${Math.random().toString(36).substring(2)}`;
-    sessionStorage.setItem('clientId', clientId);
+    sessionStorage.setItem("clientId", clientId);
   }
   return clientId;
 };
@@ -25,7 +25,7 @@ export const getTotalUsers = async (): Promise<number> => {
 
 // userServices.ts
 export const fetchUsers = async (
-  page: number, 
+  page: number,
   nUsersPerPage: number,
   search?: string[]
 ): Promise<UsersResponse> => {
@@ -34,7 +34,7 @@ export const fetchUsers = async (
       page,
       limit: nUsersPerPage,
       fields: "nome,cognome,email",
-      search: search ? search.join(',') : undefined
+      search: search ? search.join(",") : undefined,
     },
   });
   return response.data;
@@ -42,10 +42,24 @@ export const fetchUsers = async (
 
 export const getUserDetails = async (userId: string): Promise<User> => {
   try {
+    console.log('Fetching user details for ID:', userId);
+    console.log('API URL:', `${API_URL}/${userId}`);
     const response = await axios.get(`${API_URL}/${userId}`);
-    return response.data;
+    console.log('User details response:', response.data);
+    
+    // Assicuriamoci che la data sia nel formato corretto
+    const userData = response.data;
+    if (userData.dataNascita) {
+      console.log('Original dataNascita:', userData.dataNascita);
+    }
+    
+    return userData;
   } catch (error) {
     console.error("Errore nel recupero dei dettagli utente:", error);
+    if (axios.isAxiosError(error)) {
+      console.error('Response status:', error.response?.status);
+      console.error('Response data:', error.response?.data);
+    }
     throw error;
   }
 };
@@ -66,20 +80,21 @@ export const calculateAge = (birthDate: Date): number => {
   return age;
 };
 
-
 export const addUser = async (userData: UserData) => {
   try {
     const clientId = getClientId();
     const response = await axios.post(`${API_URL}`, userData, {
       headers: {
-        'x-client-id': clientId
-      }
+        "x-client-id": clientId,
+      },
     });
     console.log("addUser: response", response);
     return response.data;
   } catch (error: any) {
     console.log("addUser: error", error);
-    throw new Error(error.response?.data?.message || "Errore nella creazione utente.");
+    throw new Error(
+      error.response?.data?.message || "Errore nella creazione utente."
+    );
   }
 };
 
@@ -91,17 +106,17 @@ export const updateUser = async (userId: string, userData: UserData) => {
     console.log("updateUser - userId:", userId);
     console.log("updateUser - API_URL:", API_URL);
     console.log("updateUser - full URL:", `${API_URL}/${userId}`);
-    
+
     const clientId = getClientId();
     console.log("updateUser - clientId:", clientId);
-    
+
     const response = await axios.put(`${API_URL}/${userId}`, userData, {
       headers: {
-        'x-client-id': clientId
-      }
+        "x-client-id": clientId,
+      },
     });
     console.log("updateUser: response", response);
-    
+
     return response.data;
   } catch (error: any) {
     console.log("updateUser: error", error);
@@ -116,11 +131,13 @@ export const deleteUser = async (userId: string): Promise<void> => {
     const clientId = getClientId();
     await axios.delete(`${API_URL}/${userId}`, {
       headers: {
-        'x-client-id': clientId
-      }
+        "x-client-id": clientId,
+      },
     });
   } catch (error: any) {
-    throw new Error(error.response?.data?.message || "Errore nell'eliminazione dell'utente");
+    throw new Error(
+      error.response?.data?.message || "Errore nell'eliminazione dell'utente"
+    );
   }
 };
 
@@ -130,16 +147,16 @@ export const checkUserLock = async (userId: string): Promise<boolean> => {
     const clientId = getClientId();
     console.log("checkUserLock - clientId:", clientId);
     if (!clientId) {
-      throw new Error('Client ID non trovato');
+      throw new Error("Client ID non trovato");
     }
-    
+
     const response = await axios.get(`${API_URL}/lock/${userId}`, {
       headers: {
-        'x-client-id': clientId
-      }
+        "x-client-id": clientId,
+      },
     });
     console.log("checkUserLock - response:", response);
-    return response.data?.message === 'Lock acquisito con successo';
+    return response.data?.message === "Lock acquisito con successo";
   } catch (error) {
     console.error("checkUserLock - error:", error);
     if (axios.isAxiosError(error)) {
@@ -147,10 +164,10 @@ export const checkUserLock = async (userId: string): Promise<boolean> => {
         throw new Error(error.response.data.message);
       }
       if (error.response?.status === 400) {
-        throw new Error('Errore nella richiesta di lock');
+        throw new Error("Errore nella richiesta di lock");
       }
     }
-    throw new Error('Errore durante il controllo del lock');
+    throw new Error("Errore durante il controllo del lock");
   }
 };
 
@@ -158,16 +175,16 @@ export const releaseLock = async (userId: string): Promise<void> => {
   try {
     const clientId = getClientId();
     if (!clientId) {
-      throw new Error('Client ID non trovato');
+      throw new Error("Client ID non trovato");
     }
-    
+
     await axios.delete(`${API_URL}/lock/${userId}`, {
       headers: {
-        'x-client-id': clientId
-      }
+        "x-client-id": clientId,
+      },
     });
   } catch (error) {
-    console.error('Error releasing lock:', error);
+    console.error("Error releasing lock:", error);
     // Non lanciamo l'errore perché il rilascio del lock non dovrebbe bloccare l'utente
   }
 };
