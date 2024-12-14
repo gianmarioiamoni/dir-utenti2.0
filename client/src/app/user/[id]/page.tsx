@@ -4,19 +4,25 @@ import { Suspense } from 'react';
 import { getUserDetails } from '@/services/userServices';
 import UserDetailsContent from './UserDetailsContent';
 
-type Props = {
-    params: { id: string }
-}
+export const dynamic = 'force-dynamic';
 
-async function UserDetailsPage({ params }: Props) {
-    const { id } = params;
-    const userDetails = await getUserDetails(id);
-    
+export default function Page({
+    params,
+}: {
+    params: { id: string };
+}) {
     return (
         <Suspense fallback={<div>Loading...</div>}>
-            <UserDetailsContent userDetails={userDetails} />
+            <UserDetailsWrapper id={params.id} />
         </Suspense>
     );
 }
 
-export default UserDetailsPage;
+async function UserDetailsWrapper({ id }: { id: string }) {
+    const user = await getUserDetails(id);
+    const userDetails = {
+        ...user,
+        dataNascita: user.dataNascita.toISOString()
+    };
+    return <UserDetailsContent userDetails={userDetails} />;
+}
