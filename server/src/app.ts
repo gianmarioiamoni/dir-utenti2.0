@@ -53,7 +53,7 @@ app.use(errorHandler);
 const connectDB = async () => {
   try {
     await mongoose.connect(
-      MONGODB_URI,
+      MONGODB_URI
     );
     console.log("MONGODB_URI", MONGODB_URI);
     console.log("MongoDB connected");
