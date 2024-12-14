@@ -1,5 +1,4 @@
 import axios from "axios";
-import { getClientId } from "./userServices";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 const API_URL = `${BASE_URL}/api/upload`;

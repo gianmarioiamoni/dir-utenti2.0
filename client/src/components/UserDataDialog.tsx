@@ -5,6 +5,7 @@ import { useMessage } from "@/hooks/useMessage";
 import { useUsers } from "@/hooks/useUsers";
 
 import Loader from "@/components/Loader";
+import Image from 'next/image';
 
 interface UserDataDialogProps {
     isOpen: boolean;
@@ -35,9 +36,8 @@ const UserDataDialog: FC<UserDataDialogProps> = ({
     const {
         formData,
         handleChange,
-        handleFileChange,
+        handleFileUpload,
         handleSubmit,
-        handleCancel,
         loading,
         validationErrors
     } = useUserData({
@@ -136,7 +136,7 @@ const UserDataDialog: FC<UserDataDialogProps> = ({
                                 type="file"
                                 accept="image/*"
                                 onChange={(e) =>
-                                    e.target.files && handleFileChange(e.target.files[0])
+                                    e.target.files && handleFileUpload(e.target.files[0])
                                 }
                                 className="hidden"
                             />
@@ -147,10 +147,12 @@ const UserDataDialog: FC<UserDataDialogProps> = ({
                         <Loader isLoading={loading} msg="Caricamento Foto Profilo..." />
                     ) : (
                         formData.fotoProfilo && (
-                            <img
+                            <Image
                                 src={formData.fotoProfilo}
                                 alt="Anteprima Foto Profilo"
-                                className="w-24 h-24 rounded-full"
+                                width={96}
+                                height={96}
+                                className="rounded-full object-cover"
                             />
                         )
                     )}
@@ -158,7 +160,7 @@ const UserDataDialog: FC<UserDataDialogProps> = ({
 
                 {/* Bottoni di azione */}
                 <div className="flex justify-end space-x-2">
-                    <button className="btn-secondary border-2 border-gray-light" onClick={handleCancel}>
+                    <button className="btn-secondary border-2 border-gray-light" onClick={onClose}>
                         Annulla
                     </button>
                     <button className="btn-primary border-2 border-gray-light" onClick={handleSubmit}>

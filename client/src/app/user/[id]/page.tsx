@@ -15,7 +15,7 @@ interface UserDetailsPageProps {
 }
 
 export default async function UserDetailsPage({ params }: UserDetailsPageProps) {
-    const { id } = await params;
+    const { id } = params;
     const userDetails = await getUserDetails(id);
 
     return (

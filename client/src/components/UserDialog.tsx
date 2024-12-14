@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 import Image from 'next/image';
 import { UserData } from '@/interfaces/userInterfaces';
 import { useUserData } from '@/hooks/useUserData';

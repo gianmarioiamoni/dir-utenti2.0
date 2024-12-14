@@ -95,6 +95,11 @@ export const useUserData = ({
     }
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
   return {
     formData,
     setFormData,
@@ -102,5 +107,6 @@ export const useUserData = ({
     validationErrors,
     handleSubmit,
     handleFileUpload,
+    handleChange,
   };
 };
