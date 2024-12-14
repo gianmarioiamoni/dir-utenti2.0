@@ -1,10 +1,20 @@
+'use client';
+
 import ClientHome from "./ClientHome";
-import {useCount} from "@/hooks/useCount";
+import { useCount } from "@/hooks/useCount";
+import { useState, useEffect } from 'react';
 
-const {fetchUserCount} = useCount();
+export default function Home() {
+  const { fetchUserCount } = useCount();
+  const [data, setData] = useState<{ userCount: number; error: string | null }>({ userCount: 0, error: null });
 
-export default async function Home() {
-  const { userCount, error } = await fetchUserCount();
+  useEffect(() => {
+    const loadData = async () => {
+      const result = await fetchUserCount();
+      setData(result);
+    };
+    loadData();
+  }, [fetchUserCount]);
 
-  return <ClientHome userCount={userCount} error={error} />;
+  return <ClientHome userCount={data.userCount} error={data.error} />;
 }

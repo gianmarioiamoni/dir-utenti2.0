@@ -1,3 +1,5 @@
+'use client';
+
 import { FC } from "react";
 
 interface ConfirmDialogProps {
@@ -8,17 +10,23 @@ interface ConfirmDialogProps {
     cognome: string;
 }
 
-const DeleteUserConfirmDialog: FC<ConfirmDialogProps> = ({cancelDelete, proceedDelete, isDeleting, nome, cognome}) => {
-    
+const DeleteUserConfirmDialog: FC<ConfirmDialogProps> = ({
+    cancelDelete,
+    proceedDelete,
+    isDeleting,
+    nome,
+    cognome
+}) => {
     return (
         <div className="fixed inset-0 bg-transparent flex items-center justify-center z-50">
             <div className="bg-background p-6 rounded-lg shadow-xl border border-gray-light">
                 <h2 className="text-xl font-bold mb-4">Conferma cancellazione</h2>
-                <p className="mb-4">Sei sicuro di voler cancellare l'utente {nome} {cognome}?</p>
+                <p className="mb-4">Sei sicuro di voler cancellare l&apos;utente {nome} {cognome}?</p>
                 <div className="flex justify-end space-x-2">
                     <button
                         onClick={cancelDelete}
                         className="btn-secondary mr-2"
+                        type="button"
                     >
                         Annulla
                     </button>
@@ -26,6 +34,7 @@ const DeleteUserConfirmDialog: FC<ConfirmDialogProps> = ({cancelDelete, proceedD
                         onClick={proceedDelete}
                         className="btn-danger"
                         disabled={isDeleting}
+                        type="button"
                     >
                         {isDeleting ? 'Cancellazione...' : 'Conferma'}
                     </button>
@@ -35,4 +44,4 @@ const DeleteUserConfirmDialog: FC<ConfirmDialogProps> = ({cancelDelete, proceedD
     );
 };
 
-export default DeleteUserConfirmDialog
+export default DeleteUserConfirmDialog;
