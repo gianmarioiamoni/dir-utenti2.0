@@ -15,10 +15,12 @@ import uploadRoute from "./routes/uploadRoutes";
 
 const app: Express = express();
 
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
+
 // Cors: allow localhost:3000 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: CLIENT_URL,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization", "x-client-id"],
   })
