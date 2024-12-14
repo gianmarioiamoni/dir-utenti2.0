@@ -12,9 +12,13 @@ interface UserDetailsPageProps {
     params: {
         id: string;
     };
+    searchParams: { [key: string]: string | string[] | undefined };
 }
 
-export default async function UserDetailsPage({ params }: UserDetailsPageProps) {
+export default async function UserDetailsPage({ 
+    params,
+    searchParams 
+}: UserDetailsPageProps) {
     const { id } = params;
     const userDetails = await getUserDetails(id);
 
