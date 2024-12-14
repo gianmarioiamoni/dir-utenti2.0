@@ -29,7 +29,7 @@ export default function UserDetailsContent({ userDetails }: UserDetailsContentPr
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <UserBreadcrumbs userDetails={user}/>
+            <UserBreadcrumbs userDetails={user} />
             <Card className="mt-6 shadow-lg">
                 <CardHeader className="flex justify-center items-center pb-0">
                     <Image

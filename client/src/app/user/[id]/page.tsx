@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import { getUserDetails } from '@/services/userServices';
 import UserDetailsContent from './UserDetailsContent';
+import { User } from '@/interfaces/userInterfaces';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,13 +12,13 @@ interface PageProps {
 export default async function Page({ params }: PageProps) {
     const { id } = await params;
     const userData = await getUserDetails(id);
-    
-    // Assicuriamoci che dataNascita sia una data valida
+
+    // Assicuriamoci che dataNascita sia nel formato corretto per il componente
     const userDetails = {
         ...userData,
-        dataNascita: typeof userData.dataNascita === 'string' 
-            ? userData.dataNascita 
-            : new Date(userData.dataNascita).toISOString()
+        dataNascita: userData.dataNascita instanceof Date 
+            ? userData.dataNascita.toISOString().split('T')[0]
+            : String(userData.dataNascita).split('T')[0]
     };
 
     return (
