@@ -5,11 +5,12 @@ import UserDetailsContent from './UserDetailsContent';
 export const dynamic = 'force-dynamic';
 
 interface PageProps {
-    params: { id: string };
+    // params: { id: string };
+     id: string ;
 }
 
-async function Page({ params }: PageProps) {
-    const user = await getUserDetails(params.id);
+async function Page({ id }: PageProps) {
+    const user = await getUserDetails(id);
     const userDetails = {
         ...user,
         dataNascita: user.dataNascita.toISOString()
