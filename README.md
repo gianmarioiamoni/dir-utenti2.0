@@ -2,6 +2,8 @@
 
 🎯 A full-stack application for managing a user directory with real-time updates, optimized for responsiveness and user experience. 
 
+![Screenshot 2024-12-14 alle 00 09 29](https://github.com/user-attachments/assets/59ceef22-80b4-42e5-b15f-382d87de4e4e)
+
 
 ## 🚀 Key Features
 
@@ -11,12 +13,28 @@
   - Edit user details with real-time updates
   - Delete users with instant notifications
   - Search users by name, surname, or email
+    
+  ![Screenshot 2024-12-14 alle 00 09 46](https://github.com/user-attachments/assets/75abc4df-ed66-42c0-a462-d4434810a646)
   
+  ![Screenshot 2024-12-14 alle 00 10 53](https://github.com/user-attachments/assets/6836e1de-e737-493b-8ba3-6e850ffbc5aa)
+
+  ![Screenshot 2024-12-14 alle 00 13 29](https://github.com/user-attachments/assets/7b155b74-6e07-4f2b-bcf3-ac627db90367)
+
+  ![Screenshot 2024-12-14 alle 00 48 45](https://github.com/user-attachments/assets/96e13bfd-4be3-4204-91a0-c0ebff04a139)
+
+
 - **Real-time Updates:**
   - Socket.IO integration for instant notifications
   - Live updates when users are added/deleted
   - Concurrent editing protection with Redis locks
-  
+
+  ![Screenshot 2024-12-14 alle 00 53 54](https://github.com/user-attachments/assets/a560d653-a239-4e47-9b56-10ed12fcda3b)
+
+  ![Screenshot 2024-12-14 alle 00 54 54](https://github.com/user-attachments/assets/353d5bfa-8411-4a05-af74-3f8bed9d51bf)
+
+  ![Screenshot 2024-12-14 alle 00 52 38](https://github.com/user-attachments/assets/9741404e-9cc1-493e-9150-79dfc577dd2b)
+
+    
 - **Advanced User Experience:**
   - Responsive design with Tailwind CSS
   - Form validation (client & server side)
