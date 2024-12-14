@@ -6,23 +6,20 @@ import UserDetailsContent from './UserDetailsContent';
 
 export const dynamic = 'force-dynamic';
 
-export default function Page({
+export default async function Page({
     params,
 }: {
     params: { id: string };
 }) {
-    return (
-        <Suspense fallback={<div>Loading...</div>}>
-            <UserDetailsWrapper id={params.id} />
-        </Suspense>
-    );
-}
-
-async function UserDetailsWrapper({ id }: { id: string }) {
-    const user = await getUserDetails(id);
+    const user = await getUserDetails(params.id);
     const userDetails = {
         ...user,
         dataNascita: user.dataNascita.toISOString()
     };
-    return <UserDetailsContent userDetails={userDetails} />;
+
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <UserDetailsContent userDetails={userDetails} />
+        </Suspense>
+    );
 }
