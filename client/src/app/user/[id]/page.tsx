@@ -4,12 +4,13 @@ import UserDetailsContent from './UserDetailsContent';
 
 export const dynamic = 'force-dynamic';
 
-interface PageProps {
-    params: { id: string };
-    searchParams?: { [key: string]: string | string[] | undefined };
-}
+type Props = {
+    params: {
+        id: string;
+    };
+};
 
-export default async function Page({ params }: PageProps) {
+const Page = async ({ params }: Props) => {
     const user = await getUserDetails(params.id);
     const userDetails = {
         ...user,
@@ -21,4 +22,6 @@ export default async function Page({ params }: PageProps) {
             <UserDetailsContent userDetails={userDetails} />
         </Suspense>
     );
-}
+};
+
+export default Page;
