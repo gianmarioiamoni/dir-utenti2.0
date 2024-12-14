@@ -4,14 +4,13 @@ import UserDetailsContent from './UserDetailsContent';
 
 export const dynamic = 'force-dynamic';
 
-type PageParams = { id: string };
+interface PageProps {
+    params: Promise<{ id: string }>;
+}
 
-export default async function Page({
-    params,
-}: {
-    params: PageParams;
-}) {
-    const user = await getUserDetails(params.id);
+export default async function Page({ params }: PageProps) {
+    const { id } = await params;
+    const user = await getUserDetails(id);
     const userDetails = {
         ...user,
         dataNascita: user.dataNascita.toISOString()
