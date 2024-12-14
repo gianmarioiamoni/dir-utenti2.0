@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: dir-utenti-client
+    env: node
+    buildCommand: cd client && npm install && npm run build
+    startCommand: cd client && npm start
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        value: https://dir-utenti-server.onrender.com
+      - key: NODE_ENV
+        value: production
+
+  - type: web
+    name: dir-utenti-server
+    env: node
+    buildCommand: cd server && npm install
+    startCommand: cd server && npm start
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false # Will be set manually in Render dashboard
+      - key: REDIS_URL
+        sync: false # Will be set manually in Render dashboard
+      - key: CLIENT_URL
+        value: https://dir-utenti-client.onrender.com
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false

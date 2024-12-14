@@ -8,8 +8,11 @@ const connectedSockets = new Map<string, Socket>();
 export const initializeSocket = (server: HttpServer) => {
   io = new SocketIOServer(server, {
     cors: {
-      origin: process.env.CLIENT_URL || "http://localhost:3000",
+      origin: process.env.NODE_ENV === 'production'
+        ? 'https://dir-utenti-client.onrender.com'
+        : 'http://localhost:3000',
       methods: ["GET", "POST"],
+      credentials: true,
     },
   });
 
