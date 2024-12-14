@@ -1,6 +1,5 @@
 import React from 'react';
 import Image from 'next/image';
-import { Metadata } from 'next';
 
 import { Card, CardBody, CardHeader, Divider } from "@nextui-org/react";
 import { FaUser, FaEnvelope, FaBirthdayCake } from 'react-icons/fa';
@@ -8,13 +7,13 @@ import { FaUser, FaEnvelope, FaBirthdayCake } from 'react-icons/fa';
 import UserBreadcrumbs from '@/components/UserBreadcrumbs';
 import { getUserDetails, calculateAge } from '@/services/userServices';
 
-type Props = {
-    params: { id: string }
-}
-
-export default async function UserDetailsPage({ params }: Props) {
+export default async function UserDetailsPage({
+    params,
+}: {
+    params: { id: string };
+}) {
     const { id } = params;
-    const userDetails = await getUserDetails(id);
+    const userDetails = await (await getUserDetails(id));
 
     return (
         <div className="container mx-auto px-4 py-8">
