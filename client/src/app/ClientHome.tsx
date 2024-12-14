@@ -21,7 +21,7 @@ export default function ClientHome({ userCount, error }: ClientHomeProps) {
         if (error) {
             showError(error);
         }
-    }, [error]);
+    }, [error, showError]);
 
 
     return (
