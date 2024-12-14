@@ -45,7 +45,7 @@
 ## 🛠️ Technologies
 
 ### Frontend
-- **Framework**: ${\color{lightgreen}Next.js \space 14}$ with ${\color{lightgreen}TypeScript}$
+- **Framework**: ${\color{lightgreen}Next.js \space 15}$ with ${\color{lightgreen}TypeScript}$
 - **State Management:** ${\color{lightblue}SWR}$
 - **Styling:** ${\color{lightgray}Tailwind \space CSS}$, ${\color{lightgray}NextUI}$
 - **Real-time:** ${\color{pink}Socket.IO \space client}$
