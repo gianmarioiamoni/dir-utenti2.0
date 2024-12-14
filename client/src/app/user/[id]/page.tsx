@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import Image from 'next/image';
 
@@ -7,13 +9,25 @@ import { FaUser, FaEnvelope, FaBirthdayCake } from 'react-icons/fa';
 import UserBreadcrumbs from '@/components/UserBreadcrumbs';
 import { getUserDetails, calculateAge } from '@/services/userServices';
 
-export default async function UserDetailsPage({
-    params,
-}: {
+interface Props {
     params: { id: string };
-}) {
+}
+
+export default function UserDetailsPage({ params }: Props) {
     const { id } = params;
-    const userDetails = await (await getUserDetails(id));
+    const [userDetails, setUserDetails] = React.useState<any>(null);
+
+    React.useEffect(() => {
+        const fetchUser = async () => {
+            const details = await getUserDetails(id);
+            setUserDetails(details);
+        };
+        fetchUser();
+    }, [id]);
+
+    if (!userDetails) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div className="container mx-auto px-4 py-8">
