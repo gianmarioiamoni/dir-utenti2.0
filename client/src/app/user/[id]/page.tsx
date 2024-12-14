@@ -5,11 +5,10 @@ import UserDetailsContent from './UserDetailsContent';
 export const dynamic = 'force-dynamic';
 
 interface PageProps {
-    // params: { id: string };
-     id: string ;
+    params: { id: string };
 }
 
-async function Page({ id }: PageProps) {
+async function Page({ params: { id } }: PageProps) {
     const user = await getUserDetails(id);
     const userDetails = {
         ...user,
